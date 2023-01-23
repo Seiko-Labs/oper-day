@@ -8,3 +8,5 @@ pandas
 pyxlsb
 pyautogui
 python-dotenv
+minify_html
+bs4
