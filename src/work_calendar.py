@@ -28,8 +28,8 @@ class DateInfo:
 
 class Serializer:
     def __init__(self, file_name: str, data: List[Dict[str, str]] = None) -> None:
-        self.csv_file_path: str = f'{file_name}.csv'
-        self.json_file_path: str = f'{file_name}.json'
+        self.csv_file_path: str = fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{file_name}.csv'
+        self.json_file_path: str = fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{file_name}.json'
         self.data: List[Dict[str, str]] = data
 
     def save(self, _format: str) -> None:
@@ -73,7 +73,10 @@ class LocaleManager:
         self.locale_name: str = locale_name
 
     def __enter__(self) -> None:
-        locale.setlocale(category=locale.LC_ALL, locale=self.locale_name)
+        try:
+            locale.setlocale(category=locale.LC_ALL, locale=self.locale_name)
+        except locale.Error:
+            locale.setlocale(category=locale.LC_ALL, locale='ru')
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         locale.setlocale(category=locale.LC_ALL, locale='')
@@ -129,24 +132,25 @@ class CalendarScraper:
 
 
 def main():
-    year: int = 2023
+    # year: int = 2023
 
-    # scraper = CalendarScraper(year=year, backup_file='calendar.html')
-    # date_infos: List[DateInfo] = scraper.run()
-    #
-    # serializer = Serializer(file_name=str(year), data=[asdict(date_info) for date_info in date_infos])
-    # serializer.save(_format='json')
+    for year in range(2022, 2024):
+        scraper = CalendarScraper(year=year, backup_file=fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{year}.html')
+        date_infos: List[DateInfo] = scraper.run()
+
+        serializer = Serializer(file_name=str(year), data=[asdict(date_info) for date_info in date_infos])
+        serializer.save(_format='json')
     # serializer.save(_format='csv')
 
-    serializer = Serializer(file_name=str(year))
-    data: List[DateInfo] = [DateInfo(**info) for info in serializer.load(_format='json')]
-
-    for i, today in enumerate(data):
-        yesterday_holiday = data[i - 1].is_day_off if i != 0 else None
-        tomorrow_holiday = data[i + 1].is_day_off if i != len(data) - 1 else None
-        today_holiday = today.is_day_off
-        if all([yesterday_holiday, today_holiday, tomorrow_holiday]):
-            print('skip', today.date_str)
+    # serializer = Serializer(file_name=str(year))
+    # data: List[DateInfo] = [DateInfo(**info) for info in serializer.load(_format='json')]
+    #
+    # for i, today in enumerate(data):
+    #     yesterday_holiday = data[i - 1].is_day_off if i != 0 else None
+    #     tomorrow_holiday = data[i + 1].is_day_off if i != len(data) - 1 else None
+    #     today_holiday = today.is_day_off
+    #     if all([yesterday_holiday, today_holiday, tomorrow_holiday]):
+    #         print('skip', today.date_str)
 
         # if today.is_day_off and not yesterday.is_day_off:
         #     print('work', today.date_str)
