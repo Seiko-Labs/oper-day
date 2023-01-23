@@ -26,11 +26,11 @@ class Date:
 
 
 class Actions:
-    def __init__(self, app: Application, date: dt) -> None:
+    def __init__(self, app: Application) -> None:
         self.app = app
         self.utils = Utils()
         self.is_kvit_required = False
-        self.date = Date(date=date)
+        # self.date = Date(date=date)
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
@@ -379,9 +379,9 @@ class Actions:
         self._close_day(_window=main_win)
         self._reset_to_00(_window=main_win)
         self._close_day(_window=main_win)
-        self._change_day(date='20.01.23')
+        self._change_day(date='24.01.23')
         self._refresh(_window=main_win)
-        self._change_day(date='19.01.23', repeat=True)
+        self._change_day(date='23.01.23', repeat=True)
         self._refresh(_window=main_win)
         pass
 
@@ -395,13 +395,13 @@ class Actions:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
         # for method in method_list:
         #     getattr(self, method)()
-        self.step1()
+        # self.step1()
         # self.step2()
         # self.step3()
         # self.step4()
         # self.step5()
         # self.step6()
-        # self.step7()
+        self.step7()
         # self.step8()
 
 
