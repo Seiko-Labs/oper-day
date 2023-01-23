@@ -1,0 +1,2557 @@
+[
+    {
+        "date": "2022-01-01",
+        "is_day_off": true,
+        "date_str": "01.01.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-01-02",
+        "is_day_off": true,
+        "date_str": "02.01.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-01-03",
+        "is_day_off": true,
+        "date_str": "03.01.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-01-04",
+        "is_day_off": true,
+        "date_str": "04.01.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-01-05",
+        "is_day_off": false,
+        "date_str": "05.01.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-01-06",
+        "is_day_off": false,
+        "date_str": "06.01.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-01-07",
+        "is_day_off": true,
+        "date_str": "07.01.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-01-08",
+        "is_day_off": true,
+        "date_str": "08.01.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-01-09",
+        "is_day_off": true,
+        "date_str": "09.01.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-01-10",
+        "is_day_off": false,
+        "date_str": "10.01.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-01-11",
+        "is_day_off": false,
+        "date_str": "11.01.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-01-12",
+        "is_day_off": false,
+        "date_str": "12.01.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-01-13",
+        "is_day_off": false,
+        "date_str": "13.01.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-01-14",
+        "is_day_off": false,
+        "date_str": "14.01.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-01-15",
+        "is_day_off": true,
+        "date_str": "15.01.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-01-16",
+        "is_day_off": true,
+        "date_str": "16.01.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-01-17",
+        "is_day_off": false,
+        "date_str": "17.01.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-01-18",
+        "is_day_off": false,
+        "date_str": "18.01.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-01-19",
+        "is_day_off": false,
+        "date_str": "19.01.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-01-20",
+        "is_day_off": false,
+        "date_str": "20.01.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-01-21",
+        "is_day_off": false,
+        "date_str": "21.01.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-01-22",
+        "is_day_off": true,
+        "date_str": "22.01.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-01-23",
+        "is_day_off": true,
+        "date_str": "23.01.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-01-24",
+        "is_day_off": false,
+        "date_str": "24.01.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-01-25",
+        "is_day_off": false,
+        "date_str": "25.01.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-01-26",
+        "is_day_off": false,
+        "date_str": "26.01.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-01-27",
+        "is_day_off": false,
+        "date_str": "27.01.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-01-28",
+        "is_day_off": false,
+        "date_str": "28.01.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-01-29",
+        "is_day_off": true,
+        "date_str": "29.01.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-01-30",
+        "is_day_off": true,
+        "date_str": "30.01.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-01-31",
+        "is_day_off": false,
+        "date_str": "31.01.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-02-01",
+        "is_day_off": false,
+        "date_str": "01.02.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-02-02",
+        "is_day_off": false,
+        "date_str": "02.02.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-02-03",
+        "is_day_off": false,
+        "date_str": "03.02.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-02-04",
+        "is_day_off": false,
+        "date_str": "04.02.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-02-05",
+        "is_day_off": true,
+        "date_str": "05.02.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-02-06",
+        "is_day_off": true,
+        "date_str": "06.02.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-02-07",
+        "is_day_off": false,
+        "date_str": "07.02.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-02-08",
+        "is_day_off": false,
+        "date_str": "08.02.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-02-09",
+        "is_day_off": false,
+        "date_str": "09.02.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-02-10",
+        "is_day_off": false,
+        "date_str": "10.02.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-02-11",
+        "is_day_off": false,
+        "date_str": "11.02.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-02-12",
+        "is_day_off": true,
+        "date_str": "12.02.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-02-13",
+        "is_day_off": true,
+        "date_str": "13.02.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-02-14",
+        "is_day_off": false,
+        "date_str": "14.02.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-02-15",
+        "is_day_off": false,
+        "date_str": "15.02.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-02-16",
+        "is_day_off": false,
+        "date_str": "16.02.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-02-17",
+        "is_day_off": false,
+        "date_str": "17.02.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-02-18",
+        "is_day_off": false,
+        "date_str": "18.02.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-02-19",
+        "is_day_off": true,
+        "date_str": "19.02.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-02-20",
+        "is_day_off": true,
+        "date_str": "20.02.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-02-21",
+        "is_day_off": false,
+        "date_str": "21.02.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-02-22",
+        "is_day_off": false,
+        "date_str": "22.02.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-02-23",
+        "is_day_off": false,
+        "date_str": "23.02.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-02-24",
+        "is_day_off": false,
+        "date_str": "24.02.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-02-25",
+        "is_day_off": false,
+        "date_str": "25.02.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-02-26",
+        "is_day_off": true,
+        "date_str": "26.02.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-02-27",
+        "is_day_off": true,
+        "date_str": "27.02.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-02-28",
+        "is_day_off": false,
+        "date_str": "28.02.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-03-01",
+        "is_day_off": false,
+        "date_str": "01.03.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-03-02",
+        "is_day_off": false,
+        "date_str": "02.03.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-03-03",
+        "is_day_off": false,
+        "date_str": "03.03.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-03-04",
+        "is_day_off": false,
+        "date_str": "04.03.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-03-05",
+        "is_day_off": false,
+        "date_str": "05.03.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-03-06",
+        "is_day_off": true,
+        "date_str": "06.03.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-03-07",
+        "is_day_off": true,
+        "date_str": "07.03.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-03-08",
+        "is_day_off": true,
+        "date_str": "08.03.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-03-09",
+        "is_day_off": false,
+        "date_str": "09.03.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-03-10",
+        "is_day_off": false,
+        "date_str": "10.03.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-03-11",
+        "is_day_off": false,
+        "date_str": "11.03.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-03-12",
+        "is_day_off": true,
+        "date_str": "12.03.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-03-13",
+        "is_day_off": true,
+        "date_str": "13.03.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-03-14",
+        "is_day_off": false,
+        "date_str": "14.03.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-03-15",
+        "is_day_off": false,
+        "date_str": "15.03.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-03-16",
+        "is_day_off": false,
+        "date_str": "16.03.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-03-17",
+        "is_day_off": false,
+        "date_str": "17.03.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-03-18",
+        "is_day_off": false,
+        "date_str": "18.03.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-03-19",
+        "is_day_off": true,
+        "date_str": "19.03.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-03-20",
+        "is_day_off": true,
+        "date_str": "20.03.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-03-21",
+        "is_day_off": true,
+        "date_str": "21.03.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-03-22",
+        "is_day_off": true,
+        "date_str": "22.03.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-03-23",
+        "is_day_off": true,
+        "date_str": "23.03.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-03-24",
+        "is_day_off": false,
+        "date_str": "24.03.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-03-25",
+        "is_day_off": false,
+        "date_str": "25.03.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-03-26",
+        "is_day_off": true,
+        "date_str": "26.03.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-03-27",
+        "is_day_off": true,
+        "date_str": "27.03.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-03-28",
+        "is_day_off": false,
+        "date_str": "28.03.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-03-29",
+        "is_day_off": false,
+        "date_str": "29.03.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-03-30",
+        "is_day_off": false,
+        "date_str": "30.03.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-03-31",
+        "is_day_off": false,
+        "date_str": "31.03.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-04-01",
+        "is_day_off": false,
+        "date_str": "01.04.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-04-02",
+        "is_day_off": true,
+        "date_str": "02.04.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-04-03",
+        "is_day_off": true,
+        "date_str": "03.04.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-04-04",
+        "is_day_off": false,
+        "date_str": "04.04.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-04-05",
+        "is_day_off": false,
+        "date_str": "05.04.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-04-06",
+        "is_day_off": false,
+        "date_str": "06.04.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-04-07",
+        "is_day_off": false,
+        "date_str": "07.04.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-04-08",
+        "is_day_off": false,
+        "date_str": "08.04.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-04-09",
+        "is_day_off": true,
+        "date_str": "09.04.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-04-10",
+        "is_day_off": true,
+        "date_str": "10.04.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-04-11",
+        "is_day_off": false,
+        "date_str": "11.04.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-04-12",
+        "is_day_off": false,
+        "date_str": "12.04.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-04-13",
+        "is_day_off": false,
+        "date_str": "13.04.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-04-14",
+        "is_day_off": false,
+        "date_str": "14.04.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-04-15",
+        "is_day_off": false,
+        "date_str": "15.04.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-04-16",
+        "is_day_off": true,
+        "date_str": "16.04.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-04-17",
+        "is_day_off": true,
+        "date_str": "17.04.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-04-18",
+        "is_day_off": false,
+        "date_str": "18.04.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-04-19",
+        "is_day_off": false,
+        "date_str": "19.04.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-04-20",
+        "is_day_off": false,
+        "date_str": "20.04.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-04-21",
+        "is_day_off": false,
+        "date_str": "21.04.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-04-22",
+        "is_day_off": false,
+        "date_str": "22.04.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-04-23",
+        "is_day_off": true,
+        "date_str": "23.04.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-04-24",
+        "is_day_off": true,
+        "date_str": "24.04.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-04-25",
+        "is_day_off": false,
+        "date_str": "25.04.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-04-26",
+        "is_day_off": false,
+        "date_str": "26.04.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-04-27",
+        "is_day_off": false,
+        "date_str": "27.04.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-04-28",
+        "is_day_off": false,
+        "date_str": "28.04.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-04-29",
+        "is_day_off": false,
+        "date_str": "29.04.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-04-30",
+        "is_day_off": true,
+        "date_str": "30.04.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-05-01",
+        "is_day_off": true,
+        "date_str": "01.05.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-05-02",
+        "is_day_off": true,
+        "date_str": "02.05.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-05-03",
+        "is_day_off": false,
+        "date_str": "03.05.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-05-04",
+        "is_day_off": false,
+        "date_str": "04.05.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-05-05",
+        "is_day_off": false,
+        "date_str": "05.05.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-05-06",
+        "is_day_off": false,
+        "date_str": "06.05.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-05-07",
+        "is_day_off": true,
+        "date_str": "07.05.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-05-08",
+        "is_day_off": true,
+        "date_str": "08.05.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-05-09",
+        "is_day_off": true,
+        "date_str": "09.05.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-05-10",
+        "is_day_off": true,
+        "date_str": "10.05.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-05-11",
+        "is_day_off": false,
+        "date_str": "11.05.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-05-12",
+        "is_day_off": false,
+        "date_str": "12.05.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-05-13",
+        "is_day_off": false,
+        "date_str": "13.05.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-05-14",
+        "is_day_off": true,
+        "date_str": "14.05.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-05-15",
+        "is_day_off": true,
+        "date_str": "15.05.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-05-16",
+        "is_day_off": false,
+        "date_str": "16.05.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-05-17",
+        "is_day_off": false,
+        "date_str": "17.05.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-05-18",
+        "is_day_off": false,
+        "date_str": "18.05.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-05-19",
+        "is_day_off": false,
+        "date_str": "19.05.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-05-20",
+        "is_day_off": false,
+        "date_str": "20.05.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-05-21",
+        "is_day_off": true,
+        "date_str": "21.05.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-05-22",
+        "is_day_off": true,
+        "date_str": "22.05.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-05-23",
+        "is_day_off": false,
+        "date_str": "23.05.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-05-24",
+        "is_day_off": false,
+        "date_str": "24.05.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-05-25",
+        "is_day_off": false,
+        "date_str": "25.05.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-05-26",
+        "is_day_off": false,
+        "date_str": "26.05.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-05-27",
+        "is_day_off": false,
+        "date_str": "27.05.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-05-28",
+        "is_day_off": true,
+        "date_str": "28.05.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-05-29",
+        "is_day_off": true,
+        "date_str": "29.05.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-05-30",
+        "is_day_off": false,
+        "date_str": "30.05.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-05-31",
+        "is_day_off": false,
+        "date_str": "31.05.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-06-01",
+        "is_day_off": false,
+        "date_str": "01.06.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-06-02",
+        "is_day_off": false,
+        "date_str": "02.06.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-06-03",
+        "is_day_off": false,
+        "date_str": "03.06.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-06-04",
+        "is_day_off": true,
+        "date_str": "04.06.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-06-05",
+        "is_day_off": true,
+        "date_str": "05.06.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-06-06",
+        "is_day_off": false,
+        "date_str": "06.06.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-06-07",
+        "is_day_off": false,
+        "date_str": "07.06.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-06-08",
+        "is_day_off": false,
+        "date_str": "08.06.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-06-09",
+        "is_day_off": false,
+        "date_str": "09.06.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-06-10",
+        "is_day_off": false,
+        "date_str": "10.06.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-06-11",
+        "is_day_off": true,
+        "date_str": "11.06.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-06-12",
+        "is_day_off": true,
+        "date_str": "12.06.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-06-13",
+        "is_day_off": false,
+        "date_str": "13.06.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-06-14",
+        "is_day_off": false,
+        "date_str": "14.06.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-06-15",
+        "is_day_off": false,
+        "date_str": "15.06.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-06-16",
+        "is_day_off": false,
+        "date_str": "16.06.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-06-17",
+        "is_day_off": false,
+        "date_str": "17.06.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-06-18",
+        "is_day_off": true,
+        "date_str": "18.06.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-06-19",
+        "is_day_off": true,
+        "date_str": "19.06.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-06-20",
+        "is_day_off": false,
+        "date_str": "20.06.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-06-21",
+        "is_day_off": false,
+        "date_str": "21.06.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-06-22",
+        "is_day_off": false,
+        "date_str": "22.06.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-06-23",
+        "is_day_off": false,
+        "date_str": "23.06.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-06-24",
+        "is_day_off": false,
+        "date_str": "24.06.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-06-25",
+        "is_day_off": true,
+        "date_str": "25.06.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-06-26",
+        "is_day_off": true,
+        "date_str": "26.06.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-06-27",
+        "is_day_off": false,
+        "date_str": "27.06.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-06-28",
+        "is_day_off": false,
+        "date_str": "28.06.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-06-29",
+        "is_day_off": false,
+        "date_str": "29.06.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-06-30",
+        "is_day_off": false,
+        "date_str": "30.06.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-07-01",
+        "is_day_off": false,
+        "date_str": "01.07.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-07-02",
+        "is_day_off": true,
+        "date_str": "02.07.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-07-03",
+        "is_day_off": true,
+        "date_str": "03.07.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-07-04",
+        "is_day_off": false,
+        "date_str": "04.07.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-07-05",
+        "is_day_off": false,
+        "date_str": "05.07.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-07-06",
+        "is_day_off": true,
+        "date_str": "06.07.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-07-07",
+        "is_day_off": false,
+        "date_str": "07.07.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-07-08",
+        "is_day_off": false,
+        "date_str": "08.07.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-07-09",
+        "is_day_off": true,
+        "date_str": "09.07.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-07-10",
+        "is_day_off": true,
+        "date_str": "10.07.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-07-11",
+        "is_day_off": false,
+        "date_str": "11.07.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-07-12",
+        "is_day_off": false,
+        "date_str": "12.07.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-07-13",
+        "is_day_off": false,
+        "date_str": "13.07.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-07-14",
+        "is_day_off": false,
+        "date_str": "14.07.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-07-15",
+        "is_day_off": false,
+        "date_str": "15.07.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-07-16",
+        "is_day_off": true,
+        "date_str": "16.07.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-07-17",
+        "is_day_off": true,
+        "date_str": "17.07.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-07-18",
+        "is_day_off": false,
+        "date_str": "18.07.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-07-19",
+        "is_day_off": false,
+        "date_str": "19.07.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-07-20",
+        "is_day_off": false,
+        "date_str": "20.07.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-07-21",
+        "is_day_off": false,
+        "date_str": "21.07.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-07-22",
+        "is_day_off": false,
+        "date_str": "22.07.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-07-23",
+        "is_day_off": true,
+        "date_str": "23.07.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-07-24",
+        "is_day_off": true,
+        "date_str": "24.07.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-07-25",
+        "is_day_off": false,
+        "date_str": "25.07.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-07-26",
+        "is_day_off": false,
+        "date_str": "26.07.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-07-27",
+        "is_day_off": false,
+        "date_str": "27.07.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-07-28",
+        "is_day_off": false,
+        "date_str": "28.07.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-07-29",
+        "is_day_off": false,
+        "date_str": "29.07.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-07-30",
+        "is_day_off": true,
+        "date_str": "30.07.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-07-31",
+        "is_day_off": true,
+        "date_str": "31.07.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-08-01",
+        "is_day_off": false,
+        "date_str": "01.08.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-08-02",
+        "is_day_off": false,
+        "date_str": "02.08.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-08-03",
+        "is_day_off": false,
+        "date_str": "03.08.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-08-04",
+        "is_day_off": false,
+        "date_str": "04.08.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-08-05",
+        "is_day_off": false,
+        "date_str": "05.08.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-08-06",
+        "is_day_off": true,
+        "date_str": "06.08.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-08-07",
+        "is_day_off": true,
+        "date_str": "07.08.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-08-08",
+        "is_day_off": false,
+        "date_str": "08.08.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-08-09",
+        "is_day_off": false,
+        "date_str": "09.08.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-08-10",
+        "is_day_off": false,
+        "date_str": "10.08.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-08-11",
+        "is_day_off": false,
+        "date_str": "11.08.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-08-12",
+        "is_day_off": false,
+        "date_str": "12.08.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-08-13",
+        "is_day_off": true,
+        "date_str": "13.08.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-08-14",
+        "is_day_off": true,
+        "date_str": "14.08.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-08-15",
+        "is_day_off": false,
+        "date_str": "15.08.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-08-16",
+        "is_day_off": false,
+        "date_str": "16.08.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-08-17",
+        "is_day_off": false,
+        "date_str": "17.08.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-08-18",
+        "is_day_off": false,
+        "date_str": "18.08.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-08-19",
+        "is_day_off": false,
+        "date_str": "19.08.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-08-20",
+        "is_day_off": true,
+        "date_str": "20.08.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-08-21",
+        "is_day_off": true,
+        "date_str": "21.08.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-08-22",
+        "is_day_off": false,
+        "date_str": "22.08.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-08-23",
+        "is_day_off": false,
+        "date_str": "23.08.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-08-24",
+        "is_day_off": false,
+        "date_str": "24.08.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-08-25",
+        "is_day_off": false,
+        "date_str": "25.08.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-08-26",
+        "is_day_off": false,
+        "date_str": "26.08.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-08-27",
+        "is_day_off": false,
+        "date_str": "27.08.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-08-28",
+        "is_day_off": true,
+        "date_str": "28.08.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-08-29",
+        "is_day_off": true,
+        "date_str": "29.08.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-08-30",
+        "is_day_off": true,
+        "date_str": "30.08.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-08-31",
+        "is_day_off": false,
+        "date_str": "31.08.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-09-01",
+        "is_day_off": false,
+        "date_str": "01.09.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-09-02",
+        "is_day_off": false,
+        "date_str": "02.09.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-09-03",
+        "is_day_off": true,
+        "date_str": "03.09.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-09-04",
+        "is_day_off": true,
+        "date_str": "04.09.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-09-05",
+        "is_day_off": false,
+        "date_str": "05.09.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-09-06",
+        "is_day_off": false,
+        "date_str": "06.09.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-09-07",
+        "is_day_off": false,
+        "date_str": "07.09.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-09-08",
+        "is_day_off": false,
+        "date_str": "08.09.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-09-09",
+        "is_day_off": false,
+        "date_str": "09.09.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-09-10",
+        "is_day_off": true,
+        "date_str": "10.09.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-09-11",
+        "is_day_off": true,
+        "date_str": "11.09.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-09-12",
+        "is_day_off": false,
+        "date_str": "12.09.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-09-13",
+        "is_day_off": false,
+        "date_str": "13.09.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-09-14",
+        "is_day_off": false,
+        "date_str": "14.09.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-09-15",
+        "is_day_off": false,
+        "date_str": "15.09.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-09-16",
+        "is_day_off": false,
+        "date_str": "16.09.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-09-17",
+        "is_day_off": true,
+        "date_str": "17.09.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-09-18",
+        "is_day_off": true,
+        "date_str": "18.09.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-09-19",
+        "is_day_off": false,
+        "date_str": "19.09.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-09-20",
+        "is_day_off": false,
+        "date_str": "20.09.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-09-21",
+        "is_day_off": false,
+        "date_str": "21.09.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-09-22",
+        "is_day_off": false,
+        "date_str": "22.09.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-09-23",
+        "is_day_off": false,
+        "date_str": "23.09.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-09-24",
+        "is_day_off": true,
+        "date_str": "24.09.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-09-25",
+        "is_day_off": true,
+        "date_str": "25.09.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-09-26",
+        "is_day_off": false,
+        "date_str": "26.09.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-09-27",
+        "is_day_off": false,
+        "date_str": "27.09.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-09-28",
+        "is_day_off": false,
+        "date_str": "28.09.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-09-29",
+        "is_day_off": false,
+        "date_str": "29.09.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-09-30",
+        "is_day_off": false,
+        "date_str": "30.09.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-10-01",
+        "is_day_off": true,
+        "date_str": "01.10.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-10-02",
+        "is_day_off": true,
+        "date_str": "02.10.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-10-03",
+        "is_day_off": false,
+        "date_str": "03.10.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-10-04",
+        "is_day_off": false,
+        "date_str": "04.10.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-10-05",
+        "is_day_off": false,
+        "date_str": "05.10.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-10-06",
+        "is_day_off": false,
+        "date_str": "06.10.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-10-07",
+        "is_day_off": false,
+        "date_str": "07.10.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-10-08",
+        "is_day_off": true,
+        "date_str": "08.10.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-10-09",
+        "is_day_off": true,
+        "date_str": "09.10.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-10-10",
+        "is_day_off": false,
+        "date_str": "10.10.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-10-11",
+        "is_day_off": false,
+        "date_str": "11.10.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-10-12",
+        "is_day_off": false,
+        "date_str": "12.10.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-10-13",
+        "is_day_off": false,
+        "date_str": "13.10.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-10-14",
+        "is_day_off": false,
+        "date_str": "14.10.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-10-15",
+        "is_day_off": true,
+        "date_str": "15.10.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-10-16",
+        "is_day_off": true,
+        "date_str": "16.10.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-10-17",
+        "is_day_off": false,
+        "date_str": "17.10.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-10-18",
+        "is_day_off": false,
+        "date_str": "18.10.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-10-19",
+        "is_day_off": false,
+        "date_str": "19.10.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-10-20",
+        "is_day_off": false,
+        "date_str": "20.10.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-10-21",
+        "is_day_off": false,
+        "date_str": "21.10.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-10-22",
+        "is_day_off": false,
+        "date_str": "22.10.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-10-23",
+        "is_day_off": true,
+        "date_str": "23.10.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-10-24",
+        "is_day_off": true,
+        "date_str": "24.10.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-10-25",
+        "is_day_off": true,
+        "date_str": "25.10.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-10-26",
+        "is_day_off": false,
+        "date_str": "26.10.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-10-27",
+        "is_day_off": false,
+        "date_str": "27.10.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-10-28",
+        "is_day_off": false,
+        "date_str": "28.10.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-10-29",
+        "is_day_off": true,
+        "date_str": "29.10.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-10-30",
+        "is_day_off": true,
+        "date_str": "30.10.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-10-31",
+        "is_day_off": false,
+        "date_str": "31.10.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-11-01",
+        "is_day_off": false,
+        "date_str": "01.11.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-11-02",
+        "is_day_off": false,
+        "date_str": "02.11.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-11-03",
+        "is_day_off": false,
+        "date_str": "03.11.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-11-04",
+        "is_day_off": false,
+        "date_str": "04.11.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-11-05",
+        "is_day_off": true,
+        "date_str": "05.11.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-11-06",
+        "is_day_off": true,
+        "date_str": "06.11.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-11-07",
+        "is_day_off": false,
+        "date_str": "07.11.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-11-08",
+        "is_day_off": false,
+        "date_str": "08.11.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-11-09",
+        "is_day_off": false,
+        "date_str": "09.11.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-11-10",
+        "is_day_off": false,
+        "date_str": "10.11.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-11-11",
+        "is_day_off": false,
+        "date_str": "11.11.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-11-12",
+        "is_day_off": true,
+        "date_str": "12.11.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-11-13",
+        "is_day_off": true,
+        "date_str": "13.11.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-11-14",
+        "is_day_off": false,
+        "date_str": "14.11.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-11-15",
+        "is_day_off": false,
+        "date_str": "15.11.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-11-16",
+        "is_day_off": false,
+        "date_str": "16.11.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-11-17",
+        "is_day_off": false,
+        "date_str": "17.11.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-11-18",
+        "is_day_off": false,
+        "date_str": "18.11.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-11-19",
+        "is_day_off": true,
+        "date_str": "19.11.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-11-20",
+        "is_day_off": true,
+        "date_str": "20.11.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-11-21",
+        "is_day_off": false,
+        "date_str": "21.11.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-11-22",
+        "is_day_off": false,
+        "date_str": "22.11.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-11-23",
+        "is_day_off": false,
+        "date_str": "23.11.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-11-24",
+        "is_day_off": false,
+        "date_str": "24.11.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-11-25",
+        "is_day_off": false,
+        "date_str": "25.11.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-11-26",
+        "is_day_off": true,
+        "date_str": "26.11.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-11-27",
+        "is_day_off": true,
+        "date_str": "27.11.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-11-28",
+        "is_day_off": false,
+        "date_str": "28.11.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-11-29",
+        "is_day_off": false,
+        "date_str": "29.11.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-11-30",
+        "is_day_off": false,
+        "date_str": "30.11.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-12-01",
+        "is_day_off": false,
+        "date_str": "01.12.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-12-02",
+        "is_day_off": false,
+        "date_str": "02.12.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-12-03",
+        "is_day_off": true,
+        "date_str": "03.12.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-12-04",
+        "is_day_off": true,
+        "date_str": "04.12.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-12-05",
+        "is_day_off": false,
+        "date_str": "05.12.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-12-06",
+        "is_day_off": false,
+        "date_str": "06.12.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-12-07",
+        "is_day_off": false,
+        "date_str": "07.12.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-12-08",
+        "is_day_off": false,
+        "date_str": "08.12.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-12-09",
+        "is_day_off": false,
+        "date_str": "09.12.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-12-10",
+        "is_day_off": true,
+        "date_str": "10.12.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-12-11",
+        "is_day_off": true,
+        "date_str": "11.12.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-12-12",
+        "is_day_off": false,
+        "date_str": "12.12.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-12-13",
+        "is_day_off": false,
+        "date_str": "13.12.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-12-14",
+        "is_day_off": false,
+        "date_str": "14.12.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-12-15",
+        "is_day_off": false,
+        "date_str": "15.12.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-12-16",
+        "is_day_off": true,
+        "date_str": "16.12.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-12-17",
+        "is_day_off": true,
+        "date_str": "17.12.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-12-18",
+        "is_day_off": true,
+        "date_str": "18.12.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-12-19",
+        "is_day_off": false,
+        "date_str": "19.12.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-12-20",
+        "is_day_off": false,
+        "date_str": "20.12.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-12-21",
+        "is_day_off": false,
+        "date_str": "21.12.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-12-22",
+        "is_day_off": false,
+        "date_str": "22.12.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-12-23",
+        "is_day_off": false,
+        "date_str": "23.12.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-12-24",
+        "is_day_off": true,
+        "date_str": "24.12.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    },
+    {
+        "date": "2022-12-25",
+        "is_day_off": true,
+        "date_str": "25.12.22",
+        "weekday": 7,
+        "weekday_str": "Sunday"
+    },
+    {
+        "date": "2022-12-26",
+        "is_day_off": false,
+        "date_str": "26.12.22",
+        "weekday": 1,
+        "weekday_str": "Monday"
+    },
+    {
+        "date": "2022-12-27",
+        "is_day_off": false,
+        "date_str": "27.12.22",
+        "weekday": 2,
+        "weekday_str": "Tuesday"
+    },
+    {
+        "date": "2022-12-28",
+        "is_day_off": false,
+        "date_str": "28.12.22",
+        "weekday": 3,
+        "weekday_str": "Wednesday"
+    },
+    {
+        "date": "2022-12-29",
+        "is_day_off": false,
+        "date_str": "29.12.22",
+        "weekday": 4,
+        "weekday_str": "Thursday"
+    },
+    {
+        "date": "2022-12-30",
+        "is_day_off": false,
+        "date_str": "30.12.22",
+        "weekday": 5,
+        "weekday_str": "Friday"
+    },
+    {
+        "date": "2022-12-31",
+        "is_day_off": true,
+        "date_str": "31.12.22",
+        "weekday": 6,
+        "weekday_str": "Saturday"
+    }
+]
