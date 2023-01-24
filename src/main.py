@@ -8,7 +8,7 @@ def main(env: str) -> None:
 
     if env == 'dev':
         colvir_usr, colvir_psw = 'colvir', 'colvir147'
-        process_name, process_path = 'COLVIR', r'C:\CBS_T_новый\COLVIR.EXE'
+        process_name, process_path = 'COLVIR', r'C:\CBS_T_new\COLVIR.EXE'
     else:
         colvir_usr, colvir_psw = 'robot', 'Asd_24-08-2022'
         process_name, process_path = 'COLVIR', r'C:\CBS_R\COLVIR.EXE'
