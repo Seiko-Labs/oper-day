@@ -353,6 +353,20 @@ class Actions:
         filter_win = self._get_window(title='Фильтр')
         filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
         filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+        filter_win['OK'].wrapper_object().click()
+
+        main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
+        self.utils.type_keys(main_win, '{F12}')
+
+        template_win = self._get_window(title='Шаблоны платежей')
+        self.utils.type_keys(template_win, '{F9}')
+
+        filter_win2 = self._get_window(title='Фильтр')
+        filter_win2['Edit2'].wrapper_object().set_text(text='Вечер')
+        filter_win2['OK'].wrapper_object().click()
+
+
+        pass
 
     def step7(self) -> None:
         self._choose_mode(mode='COPPER')
@@ -380,6 +394,42 @@ class Actions:
 
         pass
 
+    def _reg1(self, _window, all_branches):
+        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}~')
+        procedure_win = self._get_window(title='Регламентная процедура 1')
+
+        date_checkbox = procedure_win['CheckBox3'].wrapper_object()
+        if date_checkbox.get_check_state() == 0:
+            date_checkbox.click()
+        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
+        if branch_checkbox.get_check_state() == all_branches:
+            branch_checkbox.click()
+        procedure_win['OK'].wrapper_object().click()
+        #
+        # confirm_win = self._get_window(title='Подтверждение')
+        # confirm_win['Да'].wrapper_object().click()
+
+    def step9(self) -> None:
+        self._choose_mode(mode='COPPER')
+
+        main_win = self._get_window(title='Состояние операционных периодов')
+        self._select_all_branches(_window=main_win)
+        # Регламентная процедура 1
+        self._reg1(_window=main_win, all_branches=1)
+
+        main_win.wait(wait_for='visible', timeout=20)
+
+        # WAIT FOR END
+
+        self._reset_to_00(_window=main_win)
+        self._refresh(_window=main_win)
+        self._reg1(_window=main_win, all_branches=0)
+
+
+        pass
+
+
     def run(self) -> None:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
         # for method in method_list:
@@ -391,4 +441,5 @@ class Actions:
         # self.step5()
         # self.step6()
         # self.step7()
-        self.step8()
+        # self.step8()
+        self.step9()
