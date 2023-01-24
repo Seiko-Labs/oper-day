@@ -22,3 +22,4 @@ def main(env: str) -> None:
 
 if __name__ == '__main__':
     main(env='dev')
+    # main(env='prod')
