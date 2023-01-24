@@ -70,13 +70,13 @@ class Utils:
         return False
 
     @staticmethod
-    def type_keys(window, keystrokes: str, step_delay: float = .1) -> None:
+    def type_keys(_window, keystrokes: str, step_delay: float = .1) -> None:
         for command in list(filter(None, re.split(r'({.+?})', keystrokes))):
             try:
-                window.type_keys(command)
+                _window.type_keys(command)
             except pywinauto.base_wrapper.ElementNotEnabled:
                 sleep(1)
-                window.type_keys(command)
+                _window.type_keys(command)
             sleep(step_delay)
 
     @staticmethod
