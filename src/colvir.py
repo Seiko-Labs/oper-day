@@ -14,20 +14,21 @@ from pywinauto.controls.win32_controls import ButtonWrapper
 from pywinauto.findbestmatch import MatchError
 from pywinauto.findwindows import ElementNotFoundError, ElementAmbiguousError, WindowAmbiguousError, WindowNotFoundError
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
-from data_structures import Credentials, Process, DateInfo
+from data_structures import Credentials, Process, DateInfo, RobotWorkTime
 from utils import Utils
 from itertools import islice
 from actions import Actions
 
 
 class Colvir:
-    def __init__(self, credentials: Credentials, process: Process, today: DateInfo) -> None:
+    def __init__(self, credentials: Credentials, process: Process, today: DateInfo, robot_time: RobotWorkTime) -> None:
         self.credentials: Credentials = credentials
         self.process = process
         self.pid: int or None = None
         self.app: Application or None = None
         self.utils: Utils = Utils()
         self.today = today
+        self.robot_time = robot_time
 
     def run(self) -> None:
         try:
@@ -51,7 +52,7 @@ class Colvir:
         except (ElementNotFoundError, MatchError):
             self.retry()
             return
-        actions = Actions(app=self.app, today=self.today)
+        actions = Actions(app=self.app, today=self.today, robot_time=self.robot_time)
         actions.run()
         # try:
         #     actions = Actions(app=self.app)
