@@ -38,3 +38,19 @@ class WorkStatus:
     HOLIDAY = 0
     WORK = 1
     LONG = 2
+
+
+@dataclass
+class RobotWorkTime:
+    start: datetime.datetime
+    end: datetime.datetime = None
+    start_str: str = None
+    end_str: str = None
+
+    def __post_init__(self):
+        if not self.start_str:
+            self.start_str = self.start.strftime('%d.%m.%y %H:%M')
+
+    def update(self):
+        self.end = datetime.datetime.now()
+        self.end_str = self.end.strftime('%d.%m.%y %H:%M')
