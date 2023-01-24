@@ -2,7 +2,7 @@ from typing import List
 import dotenv
 from bot_notification import TelegramNotifier
 from colvir import Colvir
-from data_structures import Credentials, Process, DateInfo, WorkStatus
+from data_structures import Credentials, Process, DateInfo, WorkStatus, RobotWorkTime
 from utils import Utils
 from work_calendar import CalendarScraper
 from datetime import datetime, timedelta
@@ -11,25 +11,29 @@ from datetime import date
 
 class Robot:
     def __init__(self, credentials: Credentials, process: Process, _date: datetime.date = datetime.now().date()) -> None:
-        self.credentials: Credentials = credentials
-        self.process: Process = process
         self.restricted_pids: List[int] = []
         dotenv.load_dotenv()
         self.notifier = TelegramNotifier()
         self.utils = Utils()
-        self.today = DateInfo(date=_date)
+        self.args = {
+            'credentials': credentials,
+            'process': process,
+            'today': DateInfo(date=_date),
+            'robot_time': RobotWorkTime(start=datetime.now())
+        }
 
     def is_work_day(self) -> bool:
+        today = self.args['today']
         scraper = CalendarScraper(
-            year=self.today.date.year,
-            backup_file=fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{self.today.date.year}.html'
+            year=today.date.year,
+            backup_file=fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{today.date.year}.html'
         )
         date_infos: List[DateInfo] = scraper.date_infos
 
-        work_status = scraper.get_work_status(today=self.today.date, dates=date_infos)
+        work_status = scraper.get_work_status(today=today.date, dates=date_infos)
 
         if work_status == WorkStatus.LONG:
-            self.today = DateInfo(date=self.today.date - timedelta(days=1), is_work_day=False)
+            self.args['today'] = DateInfo(date=today.date - timedelta(days=1), is_work_day=False)
 
         return True if work_status in (WorkStatus.WORK, WorkStatus.LONG) else False
 
@@ -38,5 +42,5 @@ class Robot:
             return
 
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
-        colvir: Colvir = Colvir(credentials=self.credentials, process=self.process, today=self.today)
+        colvir: Colvir = Colvir(**self.args)
         colvir.run()
