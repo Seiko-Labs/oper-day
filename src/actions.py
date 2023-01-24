@@ -8,29 +8,15 @@ from utils import Utils
 import win32com.client
 from typing import List, Dict, Tuple, Any
 from dataclasses import dataclass
-
-
-@dataclass
-class Date:
-    date: dt
-    date_str: str = None
-    day: int = None
-    month: int = None
-    year: int = None
-
-    def __post_init__(self):
-        self.date_str = self.date.strftime('%d.%m.%y')
-        self.day = self.date.day
-        self.month = self.date.month
-        self.year = self.date.year
+from data_structures import DateInfo
 
 
 class Actions:
-    def __init__(self, app: Application) -> None:
+    def __init__(self, app: Application, today: DateInfo) -> None:
         self.app = app
         self.utils = Utils()
         self.is_kvit_required = False
-        # self.date = Date(date=date)
+        self.today = today
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
@@ -107,7 +93,7 @@ class Actions:
         date_checkbox = close_day_win['CheckBox3'].wrapper_object()
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
-        close_day_win['Edit2'].wrapper_object().set_text(text='22.09.22')
+        close_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         branch_checkbox = close_day_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == 0:
             branch_checkbox.click()
@@ -144,7 +130,7 @@ class Actions:
         _window.wait(wait_for=wait_for, timeout=timeout)
         return _window
 
-    def _change_day(self, date: str, repeat: bool = False) -> None:
+    def _change_day(self, _date: str, repeat: bool = False) -> None:
         app = self.app
         app.backend.name = 'uia'
 
@@ -152,7 +138,7 @@ class Actions:
         status_win['Static3'].wrapper_object().double_click_input()
 
         oper_day_win = self._get_window(app=app, title='Текущий операционный день')
-        oper_day_win['Edit2'].wrapper_object().set_text(text=date)
+        oper_day_win['Edit2'].wrapper_object().set_text(text=_date)
         oper_day_win['OK'].wrapper_object().click()
 
         if not repeat:
@@ -199,7 +185,7 @@ class Actions:
         date_checkbox = procedure_win['CheckBox3'].wrapper_object()
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text='22.09.22')
+        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == 1:
             branch_checkbox.click()
@@ -211,7 +197,7 @@ class Actions:
         main_win.wrapper_object().set_focus()
         main_win.wait(wait_for='visible', timeout=20)
         # Все задания на обработку
-        main_win.wrapper_object().click_input(button='left', coords=(721, 185), absolute=True)
+        self._press_status_button(main_win, button='Все задания на обработку', pixel_step=30)
         self._wait_for_reg_4()
 
     def step2(self) -> None:
@@ -247,7 +233,7 @@ class Actions:
         date_checkbox = procedure_win['CheckBox2'].wrapper_object()
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text='22.09.22')
+        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         procedure_win['OK'].wrapper_object().click()
 
         confirm_win = self._get_window(title='Подтверждение')
@@ -281,7 +267,7 @@ class Actions:
         date_checkbox = procedure_win['CheckBox3'].wrapper_object()
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text='22.09.22')
+        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == 1:
             branch_checkbox.click()
@@ -298,7 +284,7 @@ class Actions:
 
         filter_win = self._get_window(title='Фильтр')
 
-        filter_win['Edit8'].wrapper_object().set_text(text='11.01.23')
+        filter_win['Edit8'].wrapper_object().set_text(text=self.today.date_str)
         filter_win['OKButton'].wrapper_object().click()
 
         main_win = self._get_window(title='Выписки')
@@ -332,8 +318,6 @@ class Actions:
         # if not self.is_kvit_required:
         #     return
 
-        temp_date = '17.01.23'
-
         self._choose_mode(mode='AUTCHK')
 
         main_win = self._get_window(title='Выверяемые счета')
@@ -347,7 +331,7 @@ class Actions:
         self.utils.type_keys(main_win, '^g')
 
         vyverka_win = self._get_window(title='Подготовка системы выверки')
-        vyverka_win['Edit2'].wrapper_object().set_text(text=temp_date)
+        vyverka_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
 
         self.utils.type_keys(main_win, '^p')
 
@@ -367,8 +351,8 @@ class Actions:
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
-        filter_win['Edit8'].wrapper_object().set_text('17.01.23')
-        filter_win['Edit6'].wrapper_object().set_text('17.01.23')
+        filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
 
     def step7(self) -> None:
         self._choose_mode(mode='COPPER')
@@ -379,15 +363,20 @@ class Actions:
         self._close_day(_window=main_win)
         self._reset_to_00(_window=main_win)
         self._close_day(_window=main_win)
-        self._change_day(date='24.01.23')
+        self._change_day(_date=self.today.next_date_str)
         self._refresh(_window=main_win)
-        self._change_day(date='23.01.23', repeat=True)
+        self._change_day(_date=self.today.date_str, repeat=True)
         self._refresh(_window=main_win)
         pass
 
     def step8(self) -> None:
-        self._choose_mode(mode='COPPER')
-        main_win = self._get_window(title='Состояние операционных периодов')
+        self._choose_mode(mode='SORDPAY')
+
+        filter_win = self._get_window(title='Фильтр')
+        filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+
+        # main_win = self._get_window(title='Состояние операционных периодов')
 
         pass
 
@@ -401,12 +390,5 @@ class Actions:
         # self.step4()
         # self.step5()
         # self.step6()
-        self.step7()
-        # self.step8()
-
-
-if __name__ == '__main__':
-    date = Date(dt(2021, 1, 23))
-    print(date)
-    next_date = Date(dt(2021, 1, 24))
-    print(next_date)
+        # self.step7()
+        self.step8()
