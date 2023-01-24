@@ -27,8 +27,7 @@ class Colvir:
         self.pid: int or None = None
         self.app: Application or None = None
         self.utils: Utils = Utils()
-        self.today = today
-        self.robot_time = robot_time
+        self.args = {'today': today, 'robot_time': robot_time}
 
     def run(self) -> None:
         try:
@@ -52,7 +51,7 @@ class Colvir:
         except (ElementNotFoundError, MatchError):
             self.retry()
             return
-        actions = Actions(app=self.app, today=self.today, robot_time=self.robot_time)
+        actions = Actions(app=self.app, **self.args)
         actions.run()
         # try:
         #     actions = Actions(app=self.app)
