@@ -1,6 +1,7 @@
 import psutil
 from psutil import Process
 import pywinauto
+from pywinauto.base_wrapper import ElementNotEnabled
 import win32com.client as win32
 from typing import List, Dict
 import re
@@ -74,7 +75,7 @@ class Utils:
         for command in list(filter(None, re.split(r'({.+?})', keystrokes))):
             try:
                 _window.type_keys(command)
-            except pywinauto.base_wrapper.ElementNotEnabled:
+            except ElementNotEnabled:
                 sleep(1)
                 _window.type_keys(command)
             sleep(step_delay)
