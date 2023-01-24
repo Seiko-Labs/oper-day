@@ -8,15 +8,16 @@ from utils import Utils
 import win32com.client
 from typing import List, Dict, Tuple, Any
 from dataclasses import dataclass
-from data_structures import DateInfo
+from data_structures import DateInfo, RobotWorkTime
 
 
 class Actions:
-    def __init__(self, app: Application, today: DateInfo) -> None:
+    def __init__(self, app: Application, today: DateInfo, robot_time: RobotWorkTime) -> None:
         self.app = app
         self.utils = Utils()
         self.is_kvit_required = False
         self.today = today
+        self.robot_time = robot_time
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
@@ -406,9 +407,10 @@ class Actions:
         if branch_checkbox.get_check_state() == all_branches:
             branch_checkbox.click()
         procedure_win['OK'].wrapper_object().click()
-        #
-        # confirm_win = self._get_window(title='Подтверждение')
-        # confirm_win['Да'].wrapper_object().click()
+
+        confirm_win = self._get_window(title='Подтверждение')
+        confirm_win['НЕТ'].wrapper_object().click()
+        # confirm_win['ДА'].wrapper_object().click()
 
     def step9(self) -> None:
         self._choose_mode(mode='COPPER')
@@ -429,6 +431,37 @@ class Actions:
 
         pass
 
+    def step10(self):
+        self._choose_mode(mode='COPPER')
+
+        main_win = self._get_window(title='Состояние операционных периодов')
+        self.utils.type_keys(_window=main_win, keystrokes='{F5}')
+
+        report_win = self._get_window(title='Выбор отчета')
+        self.utils.type_keys(_window=report_win, keystrokes='{F9}')
+
+        filter_win = self._get_window(title='Фильтр')
+        filter_win['Edit4'].wrapper_object().set_text(text='PC05_101')
+        filter_win['OK'].wrapper_object().click()
+
+        report_win.wait(wait_for='visible active exists', timeout=20)
+        report_win['Предварительный просмотр'].wrapper_object().click()
+
+        report_win['Экспорт в файл...'].wrapper_object().click()
+
+        file_win = self._get_window(title='Файл отчета ')
+        try:
+            file_win['ComboBox'].wrapper_object().select(2)
+        except (IndexError, ValueError):
+            pass
+        file_win['OK'].wrapper_object().click()
+
+        params_win = self._get_window(title='Параметры отчета ')
+        params_win['Edit2'].wrapper_object().set_text(text=self.robot_time.start_str)
+        self.robot_time.update()
+        params_win['Edit4'].wrapper_object().set_text(text=self.robot_time.end_str)
+        params_win['OK'].wrapper_object().click()
+        pass
 
     def run(self) -> None:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
@@ -442,4 +475,5 @@ class Actions:
         # self.step6()
         # self.step7()
         # self.step8()
-        self.step9()
+        # self.step9()
+        self.step10()
