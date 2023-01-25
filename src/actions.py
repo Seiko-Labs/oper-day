@@ -9,15 +9,18 @@ import win32com.client
 from typing import List, Dict, Tuple, Any
 from dataclasses import dataclass
 from data_structures import DateInfo, RobotWorkTime
+from bot_notification import TelegramNotifier
 
 
 class Actions:
-    def __init__(self, app: Application, today: DateInfo, robot_time: RobotWorkTime) -> None:
+    def __init__(self, app: Application, today: DateInfo,
+                 robot_time: RobotWorkTime, notifier: TelegramNotifier) -> None:
         self.app = app
         self.utils = Utils()
         self.is_kvit_required = False
         self.today = today
         self.robot_time = robot_time
+        self.notifier = notifier
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
@@ -428,10 +431,10 @@ class Actions:
         self._refresh(_window=main_win)
         self._reg1(_window=main_win, all_branches=0)
 
-
         pass
 
     def step10(self):
+        self.notifier.send_notification('step10')
         self._choose_mode(mode='COPPER')
 
         main_win = self._get_window(title='Состояние операционных периодов')
@@ -460,7 +463,8 @@ class Actions:
         params_win['Edit2'].wrapper_object().set_text(text=self.robot_time.start_str)
         self.robot_time.update()
         params_win['Edit4'].wrapper_object().set_text(text=self.robot_time.end_str)
-        params_win['OK'].wrapper_object().click()
+        # params_win['OK'].wrapper_object().click()
+        self.notifier.send_notification('end step10')
         pass
 
     def run(self) -> None:
