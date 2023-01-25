@@ -18,16 +18,18 @@ from data_structures import Credentials, Process, DateInfo, RobotWorkTime
 from utils import Utils
 from itertools import islice
 from actions import Actions
+from bot_notification import TelegramNotifier
 
 
 class Colvir:
-    def __init__(self, credentials: Credentials, process: Process, today: DateInfo, robot_time: RobotWorkTime) -> None:
+    def __init__(self, credentials: Credentials, process: Process, today: DateInfo,
+                 robot_time: RobotWorkTime, notifier: TelegramNotifier) -> None:
         self.credentials: Credentials = credentials
         self.process = process
         self.pid: int or None = None
         self.app: Application or None = None
         self.utils: Utils = Utils()
-        self.args = {'today': today, 'robot_time': robot_time}
+        self.args = {'today': today, 'robot_time': robot_time, 'notifier': notifier}
 
     def run(self) -> None:
         try:
