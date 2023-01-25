@@ -10,14 +10,15 @@ from datetime import date
 
 
 class Robot:
-    def __init__(self, credentials: Credentials, process: Process, _date: datetime.date = datetime.now().date()) -> None:
+    def __init__(self, credentials: Credentials, process: Process, notifier: TelegramNotifier,
+                 _date: datetime.date = datetime.now().date()) -> None:
         self.restricted_pids: List[int] = []
         dotenv.load_dotenv()
-        self.notifier = TelegramNotifier()
         self.utils = Utils()
         self.args = {
             'credentials': credentials,
             'process': process,
+            'notifier': notifier,
             'today': DateInfo(date=_date),
             'robot_time': RobotWorkTime(start=datetime.now())
         }
@@ -33,12 +34,14 @@ class Robot:
         work_status = scraper.get_work_status(today=today.date, dates=date_infos)
 
         if work_status == WorkStatus.LONG:
+            self.args['notifier'].send_notification('������� ����. ����� ����������� ������.')
             self.args['today'] = DateInfo(date=today.date - timedelta(days=1), is_work_day=False)
 
         return True if work_status in (WorkStatus.WORK, WorkStatus.LONG) else False
 
     def run(self) -> None:
         if not self.is_work_day():
+            self.args['notifier'].send_notification(message='������� ��� �������� ����. ����� ����������� ������.')
             return
 
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
