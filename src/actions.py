@@ -11,7 +11,6 @@ from typing import List, Dict, Tuple, Any
 from dataclasses import dataclass
 from data_structures import DateInfo, RobotWorkTime
 from bot_notification import TelegramNotifier
-import copy
 
 
 class Actions:
@@ -106,7 +105,7 @@ class Actions:
         temp_file_path = r'C:\Temp\kvit.txt'
         self.utils.save_excel(file_path=temp_file_path)
 
-        kvit_rows = self.utils.text_to_dicts(file_name=temp_file_path)
+        kvit_rows = self.utils.text_to_dicts(file_path=temp_file_path)
 
         if not self.utils.is_key_present(key='KVITFL', rows=kvit_rows):
             kvit_rows = self._get_kvit_rows(_window)
@@ -121,7 +120,7 @@ class Actions:
                 sleep(2)
         self.utils.kill_all_processes(proc_name='EXCEL')
 
-        return self.utils.text_to_dicts(file_name=temp_file_path)
+        return self.utils.text_to_dicts(file_path=temp_file_path)
 
     def _close_day(self, _window: WindowSpecification) -> None:
         self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}оо{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~')
@@ -340,6 +339,7 @@ class Actions:
 
         vyverka_win = self._get_window(title='Подготовка системы выверки')
         vyverka_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        vyverka_win['OK'].wrapper_object().click()
 
         self.utils.type_keys(main_win, '^p')
 
@@ -476,9 +476,9 @@ class Actions:
         #     getattr(self, method)()
         # self.step1()
         # self.step2()
-        self.step3()
-        # self.step4()
-        # self.step5()
+        # self.step3()
+        self.step4()
+        self.step5()
         # self.step6()
         # self.step7()
         # self.step8()
