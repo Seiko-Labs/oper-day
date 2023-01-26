@@ -11,6 +11,17 @@ from time import sleep
 from datetime import datetime as dt
 
 
+class BackendManager:
+    def __init__(self, app: pywinauto.Application, backend_name: str) -> None:
+        self.app, self.backend_name = app, backend_name
+
+    def __enter__(self) -> None:
+        self.app.backend.name = self.backend_name
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.app.backend.name = 'win32' if self.backend_name == 'uia' else 'uia'
+
+
 class Utils:
     def __init__(self) -> None:
         self.excel_converter: ExcelConverter = ExcelConverter()
@@ -25,7 +36,8 @@ class Utils:
 
     @staticmethod
     def kill_all_processes(proc_name: str, restricted_pids: List[int] or None = None) -> None:
-        processes_to_kill: List[Process] = [Process(proc.pid) for proc in psutil.process_iter() if proc_name in proc.name()]
+        processes_to_kill: List[Process] = [Process(proc.pid) for proc in psutil.process_iter() if
+                                            proc_name in proc.name()]
         for process in processes_to_kill:
             try:
                 process.terminate()
@@ -46,29 +58,30 @@ class Utils:
             return False
 
     @staticmethod
-    def text_to_dicts(file_name: str) -> List[Dict[str, str]]:
+    def text_to_dicts(file_path: str) -> List[Dict[str, str]]:
         pattern = re.compile(r'(Начало|Конец) записи \d+\.\d+\.\d+ \d+:\d+:\d+')
-        encoding = 'utf-8' if file_name.endswith('.txt') else 'utf-16'
-        with open(file=file_name, mode='r', encoding=encoding) as file:
+        encoding = 'utf-8' if file_path.endswith('.txt') else 'utf-16'
+        with open(file=file_path, mode='r', encoding=encoding) as file:
             rows = [[el.replace('\n', '') for el in line.split('\t')] for line in file if not pattern.search(line)]
         header = [col.strip() for col in rows[0]]
         data_rows = islice(rows, 1, None)
         return [{col: val.strip() for col, val in zip(header, row)} for row in data_rows]
 
     @staticmethod
-    def is_reg_4_ready(file_name: str, current_date: dt, delay: int = 5) -> bool:
+    def is_reg_procedure_ready(file_name: str, reg_num: str, delay: int = 5) -> bool:
         data = Utils.text_to_dicts(file_name=file_name)
         if not data:
             sleep(delay)
             return False
 
-        for x in data:
-            if abs(current_date - dt.strptime(x['Дата уст.'], '%d.%m.%y %H:%M:%S')).total_seconds() > 30:
-                continue
-            if x['Состояние'] != 'Не обработано':
-                return True
-        sleep(delay)
-        return False
+        user_name = 'Создатель базы данных'  # temporary
+
+        reg = next((row for row in data if row['Исполнитель'] == user_name and row['Операция'] == f'Регламентная процедура номер {reg_num}'), None)
+
+        if reg:
+            sleep(delay)
+            return False
+        return True
 
     @staticmethod
     def type_keys(_window, keystrokes: str, step_delay: float = .1) -> None:
