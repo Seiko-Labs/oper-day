@@ -1,5 +1,6 @@
 import os
 import re
+import datetime
 from datetime import datetime as dt
 from time import sleep
 from typing import List, Dict
@@ -33,6 +34,7 @@ class Colvir:
 
     def run(self) -> None:
         try:
+            self.args['notifier'].send_notification(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
             self.login()
             sleep(4)
@@ -47,9 +49,9 @@ class Colvir:
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
             self.app: Application = Application(backend='win32').connect(process=self.pid)
         try:
+            self.args['notifier'].send_notification(message='Успешный вход в Colvir')
             self.confirm_warning()
             sleep(1)
-            # self.choose_mode(mode='COPPER')
         except (ElementNotFoundError, MatchError):
             self.retry()
             return
