@@ -4,8 +4,8 @@ from requests.adapters import HTTPAdapter
 
 
 class TelegramNotifier:
-    def __init__(self, chat_id: str, session: requests.Session, retries: int = 5):
-        token: str = os.getenv('TOKEN')
+    def __init__(self, chat_id: str, session: requests.Session, token: str = None, retries: int = 5):
+        token: str = os.getenv('TOKEN') if not token else token
         chat_id: str = chat_id
         self.api_url = f'https://api.telegram.org/bot{token}/sendMessage'
         self.api_params = {'chat_id': chat_id, 'parse_mode': 'Markdown'}
