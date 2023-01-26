@@ -1,15 +1,17 @@
 import os
 import pywinauto
 from pywinauto import Application, WindowSpecification
+from pywinauto.timings import TimeoutError as TimingsTimeoutError
 from time import sleep
 import datetime
 from datetime import datetime as dt
-from utils import Utils
+from utils import Utils, BackendManager
 import win32com.client
 from typing import List, Dict, Tuple, Any
 from dataclasses import dataclass
 from data_structures import DateInfo, RobotWorkTime
 from bot_notification import TelegramNotifier
+import copy
 
 
 class Actions:
@@ -21,11 +23,13 @@ class Actions:
         self.today = today
         self.robot_time = robot_time
         self.notifier = notifier
+        if today.date != dt.now().date():
+            self._change_day(today.date_str)
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
         mode_win['Edit2'].wrapper_object().set_text(text=mode)
-        mode_win['Edit2'].wrapper_object().send_keystrokes(keystrokes='~')
+        mode_win['Edit2'].wrapper_object().type_keys('~')
 
     def _save_file(self, name: str, add_col: bool = False) -> None:
         file_win = self.app.window(title='Выберите файл для экспорта')
@@ -40,25 +44,54 @@ class Actions:
             sort_win.type_keys(f'{19 * "{DOWN}"}{{SPACE}}')
         sort_win['OK'].wrapper_object().click()
 
-    def _wait_for_reg_4(self) -> None:
-        task_win = self._get_window(title='Задания на обработку операционных периодов')
+    # def _wait_for_reg_finish(self, file_name: str, reg_num: str) -> None:
+    #     task_win = self._get_window(title='Задания на обработку операционных периодов')
+    #     while True:
+    #         self.utils.kill_all_processes(proc_name='EXCEL')
+    #         self._refresh(task_win)
+    #         self.utils.type_keys(task_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
+    #
+    #         self._save_file(name=file_name)
+    #
+    #         sleep(2)
+    #         file_path: str = rf'C:\Temp\{file_name}.xls'
+    #         while not os.path.isfile(path=file_path):
+    #             sleep(2)
+    #         self.utils.kill_all_processes(proc_name='EXCEL')
+    #
+    #         if self.utils.is_reg_procedure_ready(file_name=file_path, reg_num=reg_num):
+    #             break
+    #
+    #     print('SUCCESS')
+
+    def _wait_for_reg_finish(self, _window, file_name: str, reg: str, main_branch_selected: bool = False, delay: int = 10) -> None:
         while True:
             self.utils.kill_all_processes(proc_name='EXCEL')
-            task_win.wrapper_object().menu_item('Список').sub_menu().items()[6].select()
-            task_win.wrapper_object().menu_item('Список').sub_menu().items()[4].sub_menu().items()[1].select()
+            self._refresh(_window)
+            self.utils.type_keys(_window, '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
 
-            temp_file_name = 'test'
-            self._save_file(name=temp_file_name)
+            self._save_file(name=file_name)
 
             sleep(2)
-            file_path: str = rf'C:\Temp\{temp_file_name}.xls'
+            file_path: str = rf'C:\Temp\{file_name}.xls'
             while not os.path.isfile(path=file_path):
                 sleep(2)
             self.utils.kill_all_processes(proc_name='EXCEL')
-            current_date: dt = dt.now()
 
-            if self.utils.is_reg_4_ready(file_name=file_path, current_date=current_date):
-                break
+            if reg == '4' and main_branch_selected:
+                main_branch_data = next(row for row in self.utils.text_to_dicts(file_path) if row['Код подразделения'] == '00')
+                if main_branch_data['CUSTFL4'] != '0':
+                    break
+            elif reg == '2' and not main_branch_selected:
+                data = [row for row in self.utils.text_to_dicts(file_path) if row['Код подразделения'] != '00']
+                if len([row for row in data if row['CUSTFL2'] != '0']) == len(data):
+                    break
+            elif reg == '2' and main_branch_selected:
+                main_branch_data = next(row for row in self.utils.text_to_dicts(file_path) if row['Код подразделения'] == '00')
+                if main_branch_data['CUSTFL2'] != '0':
+                    break
+
+            sleep(delay)
 
         print('SUCCESS')
 
@@ -106,7 +139,13 @@ class Actions:
         # close_day_win['OK'].wrapper_object().click()
 
     def _refresh(self, _window: WindowSpecification) -> None:
-        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}{UP}~')
+        window_text = _window.window_text()
+        keystrokes = ''
+        if window_text == 'Состояние операционных периодов':
+            keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}{UP}~'
+        elif window_text == 'Задания на обработку операционных периодов':
+            keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~'
+        self.utils.type_keys(_window, keystrokes)
 
     def _select_all_branches(self, _window, to_bottom: bool = False) -> None:
         self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}~')
@@ -135,22 +174,22 @@ class Actions:
         return _window
 
     def _change_day(self, _date: str, repeat: bool = False) -> None:
-        app = self.app
-        app.backend.name = 'uia'
+        with BackendManager(self.app, 'uia'):
+            status_win = self._get_window(app=self.app, title='Банковская система.+', regex=True)
+            if status_win['Static3'].window_text().strip() == _date:
+                return
+            status_win['Static3'].double_click_input()
 
-        status_win = self._get_window(app=app, title='Банковская система.+', regex=True)
-        status_win['Static3'].wrapper_object().double_click_input()
+            oper_day_win = self._get_window(app=self.app, title='Текущий операционный день')
+            oper_day_win['Edit2'].set_text(text=_date)
+            oper_day_win['OK'].click()
 
-        oper_day_win = self._get_window(app=app, title='Текущий операционный день')
-        oper_day_win['Edit2'].wrapper_object().set_text(text=_date)
-        oper_day_win['OK'].wrapper_object().click()
+            if not repeat:
+                warning_win = self._get_window(app=self.app, title='Внимание')
+                warning_win['Да'].click()
 
-        if not repeat:
-            warning_win = self._get_window(app=app, title='Внимание')
-            warning_win['Да'].wrapper_object().click()
-
-        oper_day_win.Dialog.wait(wait_for='exists', timeout=20)
-        oper_day_win.Dialog.type_keys('~')
+            oper_day_win.Dialog.wait(wait_for='exists', timeout=20)
+            oper_day_win.Dialog.type_keys('~')
 
     def _press_status_button(self, _window: WindowSpecification, button: str = 'Все задания на обработку', pixel_step: int = 30) -> None:
         status_win = self.app.window(title_re='Банковская система.+')
@@ -158,14 +197,10 @@ class Actions:
         i, x, y = 0, mid_point.x, mid_point.y
         while status_win['StatusBar'].window_text() != button:
             x, y = mid_point.x - i * pixel_step, mid_point.y
-            _window.wrapper_object().move_mouse_input(coords=(x, y), absolute=True)
+            _window.move_mouse_input(coords=(x, y), absolute=True)
             i += 1
         sleep(.1)
         _window.click_input(button='left', coords=(x, y), absolute=True)
-
-        task_win = self._get_window(title='Задания на обработку операционных периодов')
-        sleep(1)
-        task_win.close()
 
     def step1(self) -> None:
         # выбор режима COPPER
@@ -178,13 +213,16 @@ class Actions:
         self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{UP}~')
 
         # Подтверждение "снятие признака выполнения 4"
-        confirm_win = self._get_window(title='Подтверждение')
-        confirm_win['Да'].wrapper_object().click()
+        try:
+            confirm_win = self._get_window(title='Подтверждение', timeout=5)
+            confirm_win['Да'].wrapper_object().click()
+        except TimingsTimeoutError:
+            pass
 
         # Регламентарная процедура 4
         self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{UP}{UP}~')
 
-        procedure_win = self._get_window(title='Регламентарная процедура 4')
+        procedure_win = self._get_window(title='Регламентная процедура 4')
 
         date_checkbox = procedure_win['CheckBox3'].wrapper_object()
         if date_checkbox.get_check_state() == 0:
@@ -198,40 +236,17 @@ class Actions:
         confirm_win = self._get_window(title='Подтверждение')
         confirm_win['Да'].wrapper_object().click()
 
-        main_win.wrapper_object().set_focus()
-        main_win.wait(wait_for='visible', timeout=20)
-        # Все задания на обработку
-        self._press_status_button(main_win, button='Все задания на обработку', pixel_step=30)
-        self._wait_for_reg_4()
+        self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_4', reg='4', main_branch_selected=True)
 
     def step2(self) -> None:
         self._choose_mode(mode='COPPER')
-        # main_win = self._get_window(title='Состояние операционных периодов')
 
-        # task_win = self.app.window(title='Задания на обработку операционных периодов')
-        # task_win.close()
-        main_win = self.app.window(title='Состояние операционных периодов')
-        list_items = main_win.wrapper_object().menu_item('Список').sub_menu().items()
-        list_items[7].select()
-        selection_win = self.app.window(title='Выделение')
-        selection_win['OK'].wrapper_object().click()
+        main_win = self._get_window(title='Состояние операционных периодов')
 
-        list_items[4].sub_menu().items()[1].select()
-        temp_file_name = 'test2'
-        self._save_file(name=temp_file_name)
-        sleep(2)
-        file_path: str = rf'C:\Temp\{temp_file_name}.xls'
-        while not os.path.isfile(path=file_path):
-            sleep(2)
-        self.utils.kill_all_processes(proc_name='EXCEL')
-
-        branches = self.utils.text_to_dicts(file_name=rf'C:\Temp\{temp_file_name}.xls')
-        down = len([x for x in branches if x['Код подразделения'] != '00']) * '{DOWN}'
-        main_win.type_keys(f'{{DOWN}}{{VK_LSHIFT down}}{down}{{VK_LSHIFT up}}')
+        self._select_all_branches(_window=main_win, to_bottom=True)
 
         # Регламентарная процедура 2
-        submenu_items = main_win.wrapper_object().menu_item('Регламентные процедуры').sub_menu().items()
-        submenu_items[1].select()
+        self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
         procedure_win = self._get_window(title='Регламентная процедура 2')
 
         date_checkbox = procedure_win['CheckBox2'].wrapper_object()
@@ -243,29 +258,19 @@ class Actions:
         confirm_win = self._get_window(title='Подтверждение')
         confirm_win['Да'].wrapper_object().click()
 
-        # CHECK FOR END
-        pass
+        self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', reg='2')
+        self._select_all_branches(_window=main_win)
 
     def step3(self) -> None:
         self._choose_mode(mode='COPPER')
 
         main_win = self.app.window(title='Состояние операционных периодов')
-        list_items = main_win.wrapper_object().menu_item('Список').sub_menu().items()
-        list_items[7].select()
-        selection_win = self.app.window(title='Выделение')
-        selection_win['OK'].wrapper_object().click()
 
-        branches = self.utils.text_to_dicts(file_name=rf'C:\Temp\test2.xls')
-        down = len([x for x in branches if x['Код подразделения'] != '00']) * '{DOWN}'
-        main_win.type_keys(f'{{DOWN}}{{VK_LSHIFT down}}{down}{{VK_LSHIFT up}}')
+        self._select_all_branches(_window=main_win)
+        self._reset_to_00(_window=main_win)
 
-        sleep(1)
-
-        up = len([x for x in branches if x['Код подразделения']]) * '{UP}'
-        main_win.type_keys(f'{up}')
-
-        submenu_items = main_win.wrapper_object().menu_item('Регламентные процедуры').sub_menu().items()
-        submenu_items[1].select()
+        # Регламентарная процедура 2
+        self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
         procedure_win = self._get_window(title='Регламентная процедура 2')
 
         date_checkbox = procedure_win['CheckBox3'].wrapper_object()
@@ -275,13 +280,12 @@ class Actions:
         branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == 1:
             branch_checkbox.click()
-        # procedure_win['OK'].wrapper_object().click()
+        procedure_win['OK'].wrapper_object().click()
 
-        # confirm_win = self._get_window(title='Подтверждение')
-        # confirm_win['Да'].wrapper_object().click()
+        confirm_win = self._get_window(title='Подтверждение')
+        confirm_win['Да'].wrapper_object().click()
 
-        # CHECK FOR END
-        pass
+        self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', reg='2', main_branch_selected=True)
 
     def step4(self) -> None:
         self._choose_mode(mode='EXTRCT')
@@ -368,7 +372,6 @@ class Actions:
         filter_win2 = self._get_window(title='Фильтр')
         filter_win2['Edit2'].wrapper_object().set_text(text='Вечер')
         filter_win2['OK'].wrapper_object().click()
-
 
         pass
 
@@ -473,11 +476,11 @@ class Actions:
         #     getattr(self, method)()
         # self.step1()
         # self.step2()
-        # self.step3()
+        self.step3()
         # self.step4()
         # self.step5()
         # self.step6()
         # self.step7()
         # self.step8()
         # self.step9()
-        self.step10()
+        # self.step10()
