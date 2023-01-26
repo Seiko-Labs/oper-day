@@ -71,20 +71,19 @@ class LocaleManager:
 
 
 class CalendarScraper:
-    def __init__(self, year: int, backup_file: str) -> None:
+    def __init__(self, year: int, backup_file: str, session: requests.Session) -> None:
         self.year: int = year
         self.calendar_url: str = f'https://online.zakon.kz/accountant/Calendars/Holidays/{self.year}'
         self.backup_file: str = backup_file
         if not os.path.exists(self.backup_file):
             self._save_backup()
-        with requests.Session() as session:
-            self.html: str = self.get_html(session=session)
-            to_strain = SoupStrainer(name='div', attrs={'class': 'app-wrapper'})
-            self.soup = BeautifulSoup(self.html, 'html.parser', parse_only=to_strain)
-            self.date_infos: List[DateInfo] = self.get_date_infos()
-            boundary_dates = self.get_boundary_dates(year=year, session=session)
-            self.date_infos.insert(0, boundary_dates[0])
-            self.date_infos.append(boundary_dates[1])
+        self.html: str = self.get_html(session=session)
+        to_strain = SoupStrainer(name='div', attrs={'class': 'app-wrapper'})
+        self.soup = BeautifulSoup(self.html, 'html.parser', parse_only=to_strain)
+        self.date_infos: List[DateInfo] = self.get_date_infos()
+        boundary_dates = self.get_boundary_dates(year=year, session=session)
+        self.date_infos.insert(0, boundary_dates[0])
+        self.date_infos.append(boundary_dates[1])
 
     def _save_backup(self, html: str = '') -> None:
         with open(file=self.backup_file, mode='w', encoding='utf-8') as html_file:
@@ -151,28 +150,3 @@ class CalendarScraper:
             return WorkStatus.LONG
         else:
             return WorkStatus.WORK if is_today_work_day else WorkStatus.HOLIDAY
-
-
-def main():
-    # year: int = 2023
-
-    today = datetime.now().date()
-    scraper = CalendarScraper(year=today.year, backup_file=fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{today.year}.html')
-    date_infos: List[DateInfo] = scraper.date_infos
-    print(scraper.get_work_status(today=today, dates=date_infos))
-
-    # serializer = Serializer(file_name=str(year), data=[asdict(date_info) for date_info in date_infos])
-    # serializer.save(_format='json')
-
-    # serializer = Serializer(file_name=str(year))
-    # data: List[DateInfo] = [DateInfo(**info) for info in serializer.load(_format='json')]
-
-
-    # for i, date_info in enumerate(islice(data, 1, len(data) - 1)):
-    #     print(date_info.date_str, is_work_day(i=i, dates=data))
-
-        # print(yesterday_holiday, today_holiday, tomorrow_holiday, today, yesterday, tomorrow, sep='\t')
-
-
-if __name__ == '__main__':
-    main()
