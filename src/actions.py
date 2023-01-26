@@ -313,7 +313,6 @@ class Actions:
 
         document_win = self._get_window(title='Документ')
         kvit_rows = self._get_kvit_rows(_window=document_win)
-        print(kvit_rows)
 
         self.is_kvit_required = self.utils.is_kvit_required(rows=kvit_rows)
 
@@ -322,8 +321,8 @@ class Actions:
         main_win.close()
 
     def step5(self) -> None:
-        # if not self.is_kvit_required:
-        #     return
+        if not self.is_kvit_required:
+            return
 
         self._choose_mode(mode='AUTCHK')
 
