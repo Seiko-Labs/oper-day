@@ -49,9 +49,12 @@ class Colvir:
         try:
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
             self.app: Application = Application(backend='win32').connect(process=self.pid)
-            if self.app.Dialog.window_text() == 'Произошла ошибка':
-                self.retry()
-                return
+            try:
+                if self.app.Dialog.window_text() == 'Произошла ошибка':
+                    self.retry()
+                    return
+            except MatchError:
+                pass
         except ProcessNotFoundError:
             sleep(1)
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
