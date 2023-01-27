@@ -22,6 +22,7 @@ class Actions:
         self.today = today
         self.robot_time = robot_time
         self.notifier = notifier
+        self.prod = False
         if today.date != dt.now().date():
             self._change_day(today.date_str)
 
@@ -172,7 +173,7 @@ class Actions:
         _window.wait(wait_for=wait_for, timeout=timeout)
         return _window
 
-    def _change_day(self, _date: str, repeat: bool = False) -> None:
+    def _change_day(self, _date: str) -> None:
         with BackendManager(self.app, 'uia'):
             status_win = self._get_window(app=self.app, title='Банковская система.+', regex=True)
             if status_win['Static3'].window_text().strip() == _date:
@@ -183,9 +184,11 @@ class Actions:
             oper_day_win['Edit2'].set_text(text=_date)
             oper_day_win['OK'].click()
 
-            if not repeat:
-                warning_win = self._get_window(app=self.app, title='Внимание')
+            try:
+                warning_win = self._get_window(app=self.app, title='Внимание', timeout=5)
                 warning_win['Да'].click()
+            except TimingsTimeoutError:
+                pass
 
             oper_day_win.Dialog.wait(wait_for='exists', timeout=20)
             oper_day_win.Dialog.type_keys('~')
@@ -203,7 +206,8 @@ class Actions:
 
     def step1(self) -> None:
         # выбор режима COPPER
-        self._choose_mode(mode='COPPER')
+        if not self.prod:
+            self._choose_mode(mode='COPPER')
 
         # окно Состояние операционных периодов
         main_win = self._get_window(title='Состояние операционных периодов')
@@ -214,7 +218,8 @@ class Actions:
         # Подтверждение "снятие признака выполнения 4"
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
-            confirm_win['Да'].wrapper_object().click()
+            button = 'Да' if self.prod else 'Нет'
+            confirm_win[button].wrapper_object().click()
         except TimingsTimeoutError:
             pass
 
@@ -230,15 +235,18 @@ class Actions:
         branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == 1:
             branch_checkbox.click()
-        procedure_win['OK'].wrapper_object().click()
 
-        confirm_win = self._get_window(title='Подтверждение')
-        confirm_win['Да'].wrapper_object().click()
-
-        self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_4', reg='4', main_branch_selected=True)
+        if self.prod:
+            procedure_win['OK'].wrapper_object().click()
+            confirm_win = self._get_window(title='Подтверждение')
+            confirm_win['Да'].wrapper_object().click()
+            self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_4', reg='4', main_branch_selected=True)
+        else:
+            procedure_win.close()
 
     def step2(self) -> None:
-        self._choose_mode(mode='COPPER')
+        # if not self.prod:
+        #     self._choose_mode(mode='COPPER')
 
         main_win = self._get_window(title='Состояние операционных периодов')
 
@@ -255,13 +263,16 @@ class Actions:
         procedure_win['OK'].wrapper_object().click()
 
         confirm_win = self._get_window(title='Подтверждение')
-        confirm_win['Да'].wrapper_object().click()
+        button = 'Да' if self.prod else 'Нет'
+        confirm_win[button].wrapper_object().click()
 
-        self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', reg='2')
+        if self.prod:
+            self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', reg='2')
         self._select_all_branches(_window=main_win)
 
     def step3(self) -> None:
-        self._choose_mode(mode='COPPER')
+        # if not self.prod:
+        #     self._choose_mode(mode='COPPER')
 
         main_win = self.app.window(title='Состояние операционных периодов')
 
@@ -280,11 +291,12 @@ class Actions:
         if branch_checkbox.get_check_state() == 1:
             branch_checkbox.click()
         procedure_win['OK'].wrapper_object().click()
-
         confirm_win = self._get_window(title='Подтверждение')
-        confirm_win['Да'].wrapper_object().click()
+        button = 'Да' if self.prod else 'Нет'
+        confirm_win[button].wrapper_object().click()
 
-        self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', reg='2', main_branch_selected=True)
+        if self.prod:
+            self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', reg='2', main_branch_selected=True)
 
     def step4(self) -> None:
         self._choose_mode(mode='EXTRCT')
@@ -353,8 +365,12 @@ class Actions:
             self.utils.type_keys(main_win, '^a')
             result_win = self._get_window(title='Результаты операции')
             result_win.close()
+        main_win.close()
 
     def step6(self) -> None:
+        if not self.prod:
+            return
+
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
@@ -375,7 +391,8 @@ class Actions:
         pass
 
     def step7(self) -> None:
-        self._choose_mode(mode='COPPER')
+        # if not self.prod:
+        #     self._choose_mode(mode='COPPER')
 
         main_win = self._get_window(title='Состояние операционных периодов')
 
@@ -385,11 +402,14 @@ class Actions:
         self._close_day(_window=main_win)
         self._change_day(_date=self.today.next_date_str)
         self._refresh(_window=main_win)
-        self._change_day(_date=self.today.date_str, repeat=True)
+        self._change_day(_date=self.today.date_str)
         self._refresh(_window=main_win)
         pass
 
     def step8(self) -> None:
+        if not self.prod:
+            return
+
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
@@ -414,11 +434,12 @@ class Actions:
         procedure_win['OK'].wrapper_object().click()
 
         confirm_win = self._get_window(title='Подтверждение')
-        confirm_win['НЕТ'].wrapper_object().click()
-        # confirm_win['ДА'].wrapper_object().click()
+        button = 'ДА' if self.prod else 'НЕТ'
+        confirm_win[button].wrapper_object().click()
 
     def step9(self) -> None:
-        self._choose_mode(mode='COPPER')
+        # if not self.prod:
+        #     self._choose_mode(mode='COPPER')
 
         main_win = self._get_window(title='Состояние операционных периодов')
         self._select_all_branches(_window=main_win)
@@ -437,7 +458,8 @@ class Actions:
 
     def step10(self):
         self.notifier.send_notification('step10')
-        self._choose_mode(mode='COPPER')
+        # if not self.prod:
+        #     self._choose_mode(mode='COPPER')
 
         main_win = self._get_window(title='Состояние операционных периодов')
         self.utils.type_keys(_window=main_win, keystrokes='{F5}')
@@ -473,13 +495,13 @@ class Actions:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
         # for method in method_list:
         #     getattr(self, method)()
-        # self.step1()
-        # self.step2()
-        # self.step3()
+        self.step1()
+        self.step2()
+        self.step3()
         self.step4()
         self.step5()
         # self.step6()
-        # self.step7()
+        self.step7()
         # self.step8()
-        # self.step9()
-        # self.step10()
+        self.step9()
+        self.step10()
