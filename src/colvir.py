@@ -31,8 +31,13 @@ class Colvir:
         self.app: Application or None = None
         self.utils: Utils = Utils()
         self.args = {'today': today, 'robot_time': robot_time, 'notifier': notifier}
+        self.retry_count = 0
 
     def run(self) -> None:
+        if self.retry_count == 3:
+            self.args['notifier'].send_notification(message='Не удалось запустить Colvir')
+            return
+
         try:
             self.args['notifier'].send_notification(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
@@ -44,6 +49,9 @@ class Colvir:
         try:
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
             self.app: Application = Application(backend='win32').connect(process=self.pid)
+            if self.app.Dialog.window_text() == 'Произошла ошибка':
+                self.retry()
+                return
         except ProcessNotFoundError:
             sleep(1)
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
@@ -100,5 +108,6 @@ class Colvir:
             self.utils.kill_process(pid=self.pid)
 
     def retry(self) -> None:
+        self.retry_count += 1
         self.kill()
         self.run()
