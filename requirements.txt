@@ -1,0 +1,13 @@
+pywinauto
+psutil
+rich==13.0.1
+openpyxl
+pywin32
+requests
+pandas
+pyxlsb
+pyautogui
+python-dotenv
+minify_html
+bs4
+pycountry
