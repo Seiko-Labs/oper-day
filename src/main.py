@@ -2,6 +2,8 @@ import os
 import sys
 import warnings
 import dotenv
+import pywinauto.timings
+
 from data_structures import Credentials, Process
 from robot import Robot
 from bot_notification import TelegramNotifier
@@ -11,9 +13,11 @@ import requests
 
 def main(env: str) -> None:
     warnings.simplefilter(action='ignore', category=UserWarning)
+    pywinauto.timings.Timings.slow()
     dotenv.load_dotenv()
 
     colvir_usr, colvir_psw = os.getenv(f'COLVIR_USR_{env}'), os.getenv(f'COLVIR_PSW_{env}')
+    # colvir_usr, colvir_psw = 'robot', 'asdksl4312ad'
     process_name, process_path = 'COLVIR', os.getenv('COLVIR_PROCESS_PATH')
 
     session = requests.Session()
@@ -22,7 +26,7 @@ def main(env: str) -> None:
         'credentials': Credentials(usr=colvir_usr, psw=colvir_psw),
         'process': Process(name=process_name, path=process_path),
         'notifier': TelegramNotifier(chat_id=os.getenv(f'CHAT_ID_{env}'), session=session),
-        'today': datetime.date(2023, 1, 24),
+        'today': datetime.date(2023, 1, 26),
         'session': session,
     }
 
