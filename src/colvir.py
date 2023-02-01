@@ -94,12 +94,16 @@ class Colvir:
             raise ElementNotFoundError
 
     def confirm_warning(self) -> None:
+        found = False
         for window in self.app.windows():
+            if found:
+                break
             if window.window_text() != 'Colvir Banking System':
                 continue
             win = self.app.window(handle=window.handle)
             for child in win.descendants():
                 if child.window_text() == 'OK':
+                    found = True
                     child.send_keystrokes('{ENTER}')
                     break
 
