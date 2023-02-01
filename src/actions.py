@@ -15,7 +15,7 @@ from bot_notification import TelegramNotifier
 
 class Actions:
     def __init__(self, app: Application, today: DateInfo,
-                 robot_time: RobotWorkTime, notifier: TelegramNotifier) -> None:
+                 robot_time: RobotWorkTime, notifier: TelegramNotifier, slow: bool = False) -> None:
         self.app = app
         self.utils = Utils()
         self.is_kvit_required = False
@@ -25,6 +25,8 @@ class Actions:
         self.prod = False
         if today.date != dt.now().date():
             self._change_day(today.date_str)
+        if slow:
+            pywinauto.timings.Timings.slow()
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')

@@ -13,7 +13,6 @@ import requests
 
 def main(env: str) -> None:
     warnings.simplefilter(action='ignore', category=UserWarning)
-    # pywinauto.timings.Timings.slow()
     dotenv.load_dotenv()
 
     colvir_usr, colvir_psw = os.getenv(f'COLVIR_USR_{env}'), os.getenv(f'COLVIR_PSW_{env}')
