@@ -1,6 +1,7 @@
 import psutil
 from psutil import Process
 import pywinauto
+from pywinauto.timings import Timings
 from pywinauto.base_wrapper import ElementNotEnabled
 import win32com.client as win32
 from typing import List, Dict
@@ -13,6 +14,8 @@ from datetime import datetime as dt
 
 class BackendManager:
     def __init__(self, app: pywinauto.Application, backend_name: str) -> None:
+        if backend_name not in ['uia', 'win32']:
+            raise ValueError('backend_name must be either \'uia\' or \'win32\'')
         self.app, self.backend_name = app, backend_name
 
     def __enter__(self) -> None:
@@ -20,6 +23,24 @@ class BackendManager:
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.app.backend.name = 'win32' if self.backend_name == 'uia' else 'uia'
+
+
+class TimingManager:
+    def __init__(self, timing: str) -> None:
+        if timing not in ['fast', 'slow', 'defaults']:
+            raise ValueError('timing must be either \'fast\', \'slow\' or \'defaults\'')
+        self.timing = timing
+
+    def __enter__(self) -> None:
+        if self.timing == 'slow':
+            Timings.slow()
+        elif self.timing == 'fast':
+            Timings.fast()
+        else:
+            Timings.defaults()
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        Timings.fast()
 
 
 class Utils:
