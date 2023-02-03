@@ -24,7 +24,7 @@ def main(env: str) -> None:
         'credentials': Credentials(usr=colvir_usr, psw=colvir_psw),
         'process': Process(name=process_name, path=process_path),
         'notifier': TelegramNotifier(chat_id=os.getenv(f'CHAT_ID_{env}'), session=session),
-        'today': datetime.date(2023, 1, 26),
+        'today': datetime.date(2023, 2, 2),
         'session': session,
     }
 
