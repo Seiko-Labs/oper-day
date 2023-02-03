@@ -16,7 +16,7 @@ from pywinauto.findbestmatch import MatchError
 from pywinauto.findwindows import ElementNotFoundError, ElementAmbiguousError, WindowAmbiguousError, WindowNotFoundError
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
 from data_structures import Credentials, Process, DateInfo, RobotWorkTime
-from utils import Utils
+from utils import Utils, TimingManager
 from itertools import islice
 from actions import Actions
 from bot_notification import TelegramNotifier
@@ -38,6 +38,7 @@ class Colvir:
             self.args['notifier'].send_notification(message='Не удалось запустить Colvir')
             return
 
+        # with TimingManager(timing='slow'):
         try:
             self.args['notifier'].send_notification(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
@@ -68,14 +69,6 @@ class Colvir:
             return
         actions = Actions(app=self.app, **self.args)
         actions.run()
-        # try:
-        #     actions = Actions(app=self.app)
-        #     actions.run()
-        # except (ElementNotFoundError, TimeoutError, ElementNotEnabled, ElementAmbiguousError,
-        #         ElementNotVisible, InvalidElement, WindowAmbiguousError, WindowNotFoundError,
-        #         TimingsTimeoutError, MatchError, AppTimeoutError):
-        #     self.retry()
-        #     return
 
     def login(self) -> None:
         desktop: Desktop = Desktop(backend='win32')
