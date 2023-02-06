@@ -2,15 +2,34 @@ import os
 import pywinauto
 from pywinauto import Application, WindowSpecification
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
+from pywinauto.base_wrapper import ElementNotEnabled
 from time import sleep
 import datetime
 from datetime import datetime as dt
 from utils import Utils, BackendManager
 import win32com.client
 from typing import List, Dict, Tuple, Any
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from data_structures import DateInfo, RobotWorkTime
 from bot_notification import TelegramNotifier
+
+
+@dataclass
+class Button:
+    coords: Tuple[int, int]
+    name: str
+
+
+@dataclass
+class Buttons:
+    open_oper_day: Button = Button(coords=(0, 0), name='Открыть новый операционный период')
+    close_oper_day: Button = Button(coords=(0, 0), name='Закрыть операционный период')
+    reg_procedure_1: Button = Button(coords=(0, 0), name='Регламентная процедура 1')
+    reg_procedure_2: Button = Button(coords=(0, 0), name='Регламентная процедура 2')
+    reg_procedure_4: Button = Button(coords=(0, 0), name='Регламентная процедура 4')
+    remove_reg_procedure_4: Button = Button(coords=(0, 0), name='Снять признак выполнения регламентной процедуры 4')
+    refresh: Button = Button(coords=(0, 0), name='Обновить список')
+    tasks: Button = Button(coords=(0, 0), name='Все задания на обработку')
 
 
 class Actions:
@@ -23,8 +42,29 @@ class Actions:
         self.robot_time = robot_time
         self.notifier = notifier
         self.prod = False
+        self.buttons: Buttons = Buttons()
         if today.date != dt.now().date():
             self._change_day(today.date_str)
+
+    def _get_buttons(self, main_win: WindowSpecification, pixel_step: int = 5):
+        status_win = self.app.window(title_re='Банковская система.+')
+        rectangle = main_win['Static0'].rectangle()
+        mid_point = rectangle.mid_point()
+        main_win.move_mouse_input(coords=(mid_point.x, mid_point.y), absolute=True)
+        left_border = rectangle.left
+        i, x, y = 0, left_border, mid_point.y
+
+        while x <= mid_point.x:
+            x, y = left_border + i * pixel_step, mid_point.y
+            main_win.move_mouse_input(coords=(x, y), absolute=True)
+            i += 1
+            button_name = status_win['StatusBar'].window_text().strip()
+            if button_name == 'Для помощи нажмите F1':
+                continue
+            for field in fields(self.buttons):
+                button = getattr(self.buttons, field.name)
+                if button_name == button.name:
+                    button.coords = (x, y)
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
@@ -35,7 +75,9 @@ class Actions:
         file_win = self.app.window(title='Выберите файл для экспорта')
         file_win['Edit0'].wrapper_object().set_text(text=name)
         file_win.wrapper_object().send_keystrokes('~')
+
         confirm_win = self.app.window(title='Confirm Save As')
+        sleep(1)
         if confirm_win.exists():
             confirm_win['&Yes'].wrapper_object().click()
 
@@ -111,7 +153,7 @@ class Actions:
         # elif window_text == 'Задания на обработку операционных периодов':
         #     keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~'
         # self.utils.type_keys(_window, keystrokes)
-        self._press_status_button(_window=_window, button='Обновить список')
+        _window.click_input(button='left', coords=self.buttons.refresh.coords, absolute=True)
 
     def _select_all_branches(self, _window, to_bottom: bool = False) -> None:
         self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}~')
@@ -129,7 +171,7 @@ class Actions:
             self.utils.type_keys(_window, f'{{LEFT}}{{LEFT}}{{VK_SHIFT down}}{down}{{VK_SHIFT up}}')
 
     def _reset_to_00(self, _window: WindowSpecification) -> None:
-        self.utils.type_keys(_window, '{PGUP}{PGUP}{PGUP}{PGUP}{PGUP}', step_delay=.01)
+        self.utils.type_keys(_window, '{PGUP}{PGUP}{PGUP}{PGUP}{PGUP}{RIGHT}{DOWN}{LEFT}', step_delay=.01)
 
     def _get_window(self, title: str, app: Application or None = None, wait_for: str = 'exists', timeout: int = 20,
                     regex: bool = False, found_index: int = 0) -> WindowSpecification:
@@ -137,6 +179,7 @@ class Actions:
             app = self.app
         _window = app.window(title=title, found_index=found_index) if not regex else app.window(title_re=title, found_index=found_index)
         _window.wait(wait_for=wait_for, timeout=timeout)
+        sleep(.5)
         return _window
 
     def _change_day(self, _date: str) -> None:
@@ -159,28 +202,18 @@ class Actions:
             oper_day_win.Dialog.wait(wait_for='exists', timeout=20)
             oper_day_win.Dialog.type_keys('~')
 
-    def _press_status_button(self, _window: WindowSpecification, button: str, pixel_step: int = 10) -> None:
-        status_win = self.app.window(title_re='Банковская система.+')
-        rectangle = _window['Static0'].rectangle()
-        mid_point = rectangle.mid_point()
-        left_border = rectangle.left
-        i, x, y = 0, left_border, mid_point.y
-
-        while status_win['StatusBar'].window_text().strip() != button:
-            x, y = left_border + i * pixel_step, mid_point.y
-            _window.move_mouse_input(coords=(x, y), absolute=True)
-            i += 1
-
-        _window.click_input(button='left', coords=(x, y), absolute=True)
-
     def _fill_procedure_form(self, procedure_win: WindowSpecification, main_win: WindowSpecification,
-                             main_branch_selected: bool, file_name: str, procedure: str, day_manipulated: bool = False) -> None:
+                             main_branch_selected: bool, file_name: str, procedure: str) -> None:
         button = 'Да' if self.prod else 'Нет'
-        checkbox = 'CheckBox3' if main_branch_selected or day_manipulated else 'CheckBox2'
+        checkbox = 'CheckBox3' if main_branch_selected else 'CheckBox2'
         date_checkbox = procedure_win[checkbox].wrapper_object()
         if date_checkbox.get_check_state() == 0:
+            sleep(1)
             date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        try:
+            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        except ElementNotEnabled:
+            procedure_win[checkbox].wrapper_object().click()
 
         if main_branch_selected:
             branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
@@ -198,16 +231,31 @@ class Actions:
                 main_branch_selected=main_branch_selected
             )
 
+    def _close_day(self, main_win: WindowSpecification, main_branch_selected: bool = False) -> None:
+        main_win.click_input(button='left', coords=self.buttons.close_oper_day.coords, absolute=True)
+
+        close_day_win = self._get_window(title='Закрытие операционного периода')
+        date_checkbox = close_day_win['CheckBox3'].wrapper_object()
+        if date_checkbox.get_check_state() == 0:
+            date_checkbox.click()
+        close_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        branch_checkbox = close_day_win['CheckBox2'].wrapper_object()
+        if branch_checkbox.get_check_state() == (1 if main_branch_selected else 0):
+            branch_checkbox.click()
+        sleep(.5)
+        close_day_win.close()
+        # close_day_win['OK'].wrapper_object().click()
+
     def step1(self) -> None:
         # выбор режима COPPER
-        if not self.prod:
-            self._choose_mode(mode='COPPER')
+        # if not self.prod:
+        #     self._choose_mode(mode='COPPER')
 
         # окно Состояние операционных периодов
         main_win = self._get_window(title='Состояние операционных периодов')
 
         # Снять признак выполнения 4
-        self._press_status_button(main_win, 'Снять признак выполнения регламентной процедуры 4')
+        main_win.click_input(button='left', coords=self.buttons.remove_reg_procedure_4.coords, absolute=True)
 
         # Подтверждение "снятие признака выполнения 4"
         try:
@@ -218,7 +266,7 @@ class Actions:
             pass
 
         # Регламентарная процедура 4
-        self._press_status_button(main_win, 'Регламентная процедура 4')
+        main_win.click_input(button='left', coords=self.buttons.reg_procedure_4.coords, absolute=True)
 
         procedure_win = self._get_window(title='Регламентная процедура 4', found_index=0)
 
@@ -372,18 +420,9 @@ class Actions:
         main_win = self._get_window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win)
-        self._press_status_button(_window=main_win, button='Закрыть операционный период')
-
-        close_day_win = self._get_window(title='Закрытие операционного периода')
-        self._fill_procedure_form(
-            procedure_win=close_day_win,
-            main_win=main_win,
-            main_branch_selected=False,
-            procedure_name='Закрытие операционного периода',
-        )
-
+        self._close_day(main_win=main_win)
         self._reset_to_00(_window=main_win)
-        self._close_day(_window=main_win)
+        self._close_day(main_win=main_win, main_branch_selected=True)
         self._change_day(_date=self.today.next_date_str)
         self._refresh(_window=main_win)
         self._change_day(_date=self.today.date_str)
@@ -412,7 +451,7 @@ class Actions:
         self._select_all_branches(_window=main_win)
         # Регламентная процедура 1
 
-        self._press_status_button(_window=main_win, button='Регламентная процедура 1')
+        main_win.click_input(button='left', coords=self.buttons.reg_procedure_1.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 1')
 
         self._fill_procedure_form(
@@ -430,7 +469,7 @@ class Actions:
         self._reset_to_00(_window=main_win)
         self._refresh(_window=main_win)
 
-        self._press_status_button(_window=main_win, button='Регламентная процедура 1')
+        main_win.click_input(button='left', coords=self.buttons.reg_procedure_1.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 1')
 
         self._fill_procedure_form(
@@ -482,6 +521,9 @@ class Actions:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
         # for method in method_list:
         #     getattr(self, method)()
+        self._choose_mode(mode='COPPER')
+        main_win = self._get_window(title='Состояние операционных периодов')
+        self._get_buttons(main_win=main_win)
         self.step1()
         self.step2()
         self.step3()
@@ -492,5 +534,11 @@ class Actions:
         # self.step8()
         self.step9()
         self.step10()
+
+        # self._choose_mode(mode='COPPER')
+        # main_win = self._get_window(title='Состояние операционных периодов')
+        # self._get_buttons(main_win)
+
+
 
         pass
