@@ -103,29 +103,15 @@ class Actions:
 
         return self.utils.text_to_dicts(file_path=temp_file_path)
 
-    def _close_day(self, _window: WindowSpecification) -> None:
-        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}оо{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~')
-
-        close_day_win = self._get_window(title='Закрытие операционного периода')
-        date_checkbox = close_day_win['CheckBox3'].wrapper_object()
-        if date_checkbox.get_check_state() == 0:
-            date_checkbox.click()
-        close_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        branch_checkbox = close_day_win['CheckBox2'].wrapper_object()
-        if branch_checkbox.get_check_state() == 0:
-            branch_checkbox.click()
-        sleep(.5)
-        close_day_win.close()
-        # close_day_win['OK'].wrapper_object().click()
-
     def _refresh(self, _window: WindowSpecification) -> None:
-        window_text = _window.window_text()
-        keystrokes = ''
-        if window_text == 'Состояние операционных периодов':
-            keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}{UP}~'
-        elif window_text == 'Задания на обработку операционных периодов':
-            keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~'
-        self.utils.type_keys(_window, keystrokes)
+        # window_text = _window.window_text()
+        # keystrokes = ''
+        # if window_text == 'Состояние операционных периодов':
+        #     keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}{UP}~'
+        # elif window_text == 'Задания на обработку операционных периодов':
+        #     keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~'
+        # self.utils.type_keys(_window, keystrokes)
+        self._press_status_button(_window=_window, button='Обновить список')
 
     def _select_all_branches(self, _window, to_bottom: bool = False) -> None:
         self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}~')
@@ -187,6 +173,31 @@ class Actions:
 
         _window.click_input(button='left', coords=(x, y), absolute=True)
 
+    def _fill_procedure_form(self, procedure_win: WindowSpecification, main_win: WindowSpecification,
+                             main_branch_selected: bool, file_name: str, procedure: str, day_manipulated: bool = False) -> None:
+        button = 'Да' if self.prod else 'Нет'
+        checkbox = 'CheckBox3' if main_branch_selected or day_manipulated else 'CheckBox2'
+        date_checkbox = procedure_win[checkbox].wrapper_object()
+        if date_checkbox.get_check_state() == 0:
+            date_checkbox.click()
+        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+
+        if main_branch_selected:
+            branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
+            if branch_checkbox.get_check_state() == 1:
+                branch_checkbox.click()
+        procedure_win['OK'].wrapper_object().click()
+        confirm_win = self._get_window(title='Подтверждение')
+        confirm_win[button].wrapper_object().click()
+
+        if self.prod:
+            self._wait_for_reg_finish(
+                _window=main_win,
+                file_name=file_name,
+                procedure=procedure,
+                main_branch_selected=main_branch_selected
+            )
+
     def step1(self) -> None:
         # выбор режима COPPER
         if not self.prod:
@@ -211,21 +222,13 @@ class Actions:
 
         procedure_win = self._get_window(title='Регламентная процедура 4', found_index=0)
 
-        date_checkbox = procedure_win['CheckBox3'].wrapper_object()
-        if date_checkbox.get_check_state() == 0:
-            date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
-        if branch_checkbox.get_check_state() == 1:
-            branch_checkbox.click()
-
-        if self.prod:
-            procedure_win['OK'].wrapper_object().click()
-            confirm_win = self._get_window(title='Подтверждение')
-            confirm_win['Да'].wrapper_object().click()
-            self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_4', procedure='4', main_branch_selected=True)
-        else:
-            procedure_win.close()
+        self._fill_procedure_form(
+            procedure_win=procedure_win,
+            main_win=main_win,
+            main_branch_selected=True,
+            file_name='reg_procedure_4',
+            procedure='4'
+        )
 
     def step2(self) -> None:
         # if not self.prod:
@@ -239,18 +242,14 @@ class Actions:
         self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
         procedure_win = self._get_window(title='Регламентная процедура 2')
 
-        date_checkbox = procedure_win['CheckBox2'].wrapper_object()
-        if date_checkbox.get_check_state() == 0:
-            date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        procedure_win['OK'].wrapper_object().click()
+        self._fill_procedure_form(
+            procedure_win=procedure_win,
+            main_win=main_win,
+            main_branch_selected=False,
+            file_name='reg_procedure_2_all',
+            procedure='2'
+        )
 
-        confirm_win = self._get_window(title='Подтверждение')
-        button = 'Да' if self.prod else 'Нет'
-        confirm_win[button].wrapper_object().click()
-
-        if self.prod:
-            self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', procedure='2')
         self._select_all_branches(_window=main_win)
 
     def step3(self) -> None:
@@ -266,20 +265,13 @@ class Actions:
         self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
         procedure_win = self._get_window(title='Регламентная процедура 2')
 
-        date_checkbox = procedure_win['CheckBox3'].wrapper_object()
-        if date_checkbox.get_check_state() == 0:
-            date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
-        if branch_checkbox.get_check_state() == 1:
-            branch_checkbox.click()
-        procedure_win['OK'].wrapper_object().click()
-        confirm_win = self._get_window(title='Подтверждение')
-        button = 'Да' if self.prod else 'Нет'
-        confirm_win[button].wrapper_object().click()
-
-        if self.prod:
-            self._wait_for_reg_finish(_window=main_win, file_name='reg_procedure_2', procedure='2', main_branch_selected=True)
+        self._fill_procedure_form(
+            procedure_win=procedure_win,
+            main_win=main_win,
+            main_branch_selected=True,
+            file_name='reg_procedure_2_00',
+            procedure='2'
+        )
 
     def step4(self) -> None:
         self._choose_mode(mode='EXTRCT')
@@ -380,7 +372,16 @@ class Actions:
         main_win = self._get_window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win)
-        self._close_day(_window=main_win)
+        self._press_status_button(_window=main_win, button='Закрыть операционный период')
+
+        close_day_win = self._get_window(title='Закрытие операционного периода')
+        self._fill_procedure_form(
+            procedure_win=close_day_win,
+            main_win=main_win,
+            main_branch_selected=False,
+            procedure_name='Закрытие операционного периода',
+        )
+
         self._reset_to_00(_window=main_win)
         self._close_day(_window=main_win)
         self._change_day(_date=self.today.next_date_str)
@@ -403,23 +404,6 @@ class Actions:
 
         pass
 
-    def _reg1(self, _window, all_branches):
-        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}~')
-        procedure_win = self._get_window(title='Регламентная процедура 1')
-
-        date_checkbox = procedure_win['CheckBox3'].wrapper_object()
-        if date_checkbox.get_check_state() == 0:
-            date_checkbox.click()
-        procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
-        if branch_checkbox.get_check_state() == all_branches:
-            branch_checkbox.click()
-        procedure_win['OK'].wrapper_object().click()
-
-        confirm_win = self._get_window(title='Подтверждение')
-        button = 'ДА' if self.prod else 'НЕТ'
-        confirm_win[button].wrapper_object().click()
-
     def step9(self) -> None:
         # if not self.prod:
         #     self._choose_mode(mode='COPPER')
@@ -427,7 +411,17 @@ class Actions:
         main_win = self._get_window(title='Состояние операционных периодов')
         self._select_all_branches(_window=main_win)
         # Регламентная процедура 1
-        self._reg1(_window=main_win, all_branches=1)
+
+        self._press_status_button(_window=main_win, button='Регламентная процедура 1')
+        procedure_win = self._get_window(title='Регламентная процедура 1')
+
+        self._fill_procedure_form(
+            procedure_win=procedure_win,
+            main_win=main_win,
+            main_branch_selected=True,
+            file_name='reg_procedure_1_00',
+            procedure='1'
+        )
 
         main_win.wait(wait_for='visible', timeout=20)
 
@@ -435,7 +429,17 @@ class Actions:
 
         self._reset_to_00(_window=main_win)
         self._refresh(_window=main_win)
-        self._reg1(_window=main_win, all_branches=0)
+
+        self._press_status_button(_window=main_win, button='Регламентная процедура 1')
+        procedure_win = self._get_window(title='Регламентная процедура 1')
+
+        self._fill_procedure_form(
+            procedure_win=procedure_win,
+            main_win=main_win,
+            main_branch_selected=False,
+            file_name='reg_procedure_1_all',
+            procedure='1'
+        )
 
         pass
 
@@ -488,3 +492,5 @@ class Actions:
         # self.step8()
         self.step9()
         self.step10()
+
+        pass
