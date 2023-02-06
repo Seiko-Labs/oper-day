@@ -1,4 +1,5 @@
 import os
+import re
 import pywinauto
 from pywinauto import Application, WindowSpecification
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
@@ -391,14 +392,14 @@ class Actions:
         main_win.close()
 
     def step6(self) -> None:
-        if not self.prod:
-            return
-
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
         filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
         filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit2'].wrapper_object().set_text('1')
+        filter_win['Edit4'].wrapper_object().set_text('1')
+        sleep(1)
         filter_win['OK'].wrapper_object().click()
 
         main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
@@ -410,6 +411,15 @@ class Actions:
         filter_win2 = self._get_window(title='Фильтр')
         filter_win2['Edit2'].wrapper_object().set_text(text='Вечер')
         filter_win2['OK'].wrapper_object().click()
+
+        template_win['OK'].wrapper_object().click()
+
+        order_win = self._get_window(title='Мемориальный ордер', timeout=360)
+
+        remainder_sum = ''.join(re.findall(r'[\d.]', order_win['Edit4'].wrapper_object().window_text().strip()))
+        order_win['Edit26'].wrapper_object().set_text(text=remainder_sum)
+
+        self.utils.type_keys(_window=order_win, keystrokes='{PGDN}')
 
         pass
 
@@ -430,16 +440,32 @@ class Actions:
         pass
 
     def step8(self) -> None:
-        if not self.prod:
-            return
+        # if not self.prod:
+        #     return
 
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
         filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
         filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit2'].wrapper_object().set_text('1')
+        filter_win['Edit4'].wrapper_object().set_text('1')
+        sleep(1)
+        filter_win['OK'].wrapper_object().click()
 
-        # main_win = self._get_window(title='Состояние операционных периодов')
+        main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
+        self.utils.type_keys(main_win, '{F12}')
+
+        template_win = self._get_window(title='Шаблоны платежей')
+        self.utils.type_keys(template_win, '{F9}')
+
+        filter_win2 = self._get_window(title='Фильтр')
+        filter_win2['Edit2'].wrapper_object().set_text(text='Утро2')
+        filter_win2['OK'].wrapper_object().click()
+
+        template_win['OK'].wrapper_object().click()
+
+        order_win = self._get_window(title='Мемориальный ордер')
 
         pass
 
@@ -521,24 +547,18 @@ class Actions:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
         # for method in method_list:
         #     getattr(self, method)()
-        self._choose_mode(mode='COPPER')
-        main_win = self._get_window(title='Состояние операционных периодов')
-        self._get_buttons(main_win=main_win)
-        self.step1()
-        self.step2()
-        self.step3()
-        self.step4()
-        self.step5()
-        # self.step6()
-        self.step7()
-        # self.step8()
-        self.step9()
-        self.step10()
-
         # self._choose_mode(mode='COPPER')
         # main_win = self._get_window(title='Состояние операционных периодов')
-        # self._get_buttons(main_win)
-
-
+        # self._get_buttons(main_win=main_win)
+        # self.step1()
+        # self.step2()
+        # self.step3()
+        # self.step4()
+        # self.step5()
+        # self.step6()
+        # self.step7()
+        self.step8()
+        # self.step9()
+        # self.step10()
 
         pass
