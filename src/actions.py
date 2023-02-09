@@ -73,14 +73,17 @@ class Actions:
         mode_win['Edit2'].wrapper_object().type_keys('~')
 
     def _save_file(self, name: str, add_col: bool = False) -> None:
+        if os.path.exists(fr'C:\Temp\{name}.xls'):
+            os.unlink(fr'C:\Temp\{name}.xls')
+
         file_win = self.app.window(title='Выберите файл для экспорта')
         file_win['Edit0'].wrapper_object().set_text(text=name)
         file_win.wrapper_object().send_keystrokes('~')
 
-        confirm_win = self.app.window(title='Confirm Save As')
-        sleep(1)
-        if confirm_win.exists():
-            confirm_win['&Yes'].wrapper_object().click()
+        # confirm_win = self.app.window(title='Confirm Save As')
+        # sleep(2)
+        # if confirm_win.exists():
+        #     confirm_win['&Yes'].wrapper_object().click()
 
         sort_win = self._get_window(title='Сортировка', wait_for='exists')
         if add_col:
@@ -171,8 +174,8 @@ class Actions:
             self._refresh(_window=_window)
             self.utils.type_keys(_window, f'{{LEFT}}{{LEFT}}{{VK_SHIFT down}}{down}{{VK_SHIFT up}}')
 
-    def _reset_to_00(self, _window: WindowSpecification) -> None:
-        self.utils.type_keys(_window, '{PGUP}{PGUP}{PGUP}{PGUP}{PGUP}{RIGHT}{DOWN}{LEFT}', step_delay=.01)
+    def _reset_to_00(self, main_win: WindowSpecification) -> None:
+        self.utils.type_keys(main_win, '{PGUP}{PGUP}{PGUP}{PGUP}{PGUP}{RIGHT}{DOWN}{LEFT}', step_delay=.01)
 
     def _get_window(self, title: str, app: Application or None = None, wait_for: str = 'exists', timeout: int = 20,
                     regex: bool = False, found_index: int = 0) -> WindowSpecification:
@@ -215,6 +218,7 @@ class Actions:
             procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         except ElementNotEnabled:
             procedure_win[checkbox].wrapper_object().click()
+            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
 
         if main_branch_selected:
             branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
@@ -239,13 +243,47 @@ class Actions:
         date_checkbox = close_day_win['CheckBox3'].wrapper_object()
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
-        close_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        try:
+            close_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        except ElementNotEnabled:
+            close_day_win['CheckBox3'].wrapper_object().click()
+            close_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         branch_checkbox = close_day_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == (1 if main_branch_selected else 0):
             branch_checkbox.click()
         sleep(.5)
-        close_day_win.close()
-        # close_day_win['OK'].wrapper_object().click()
+        close_day_win['OK'].wrapper_object().click()
+        try:
+            confirm_win = self._get_window(title='Подтверждение', timeout=5)
+            button = 'Да' if self.prod else 'Нет'
+            confirm_win[button].wrapper_object().click()
+        except TimingsTimeoutError:
+            pass
+
+    def _open_day(self, main_win: WindowSpecification, main_branch_selected: bool = False) -> None:
+        main_win.click_input(button='left', coords=self.buttons.close_oper_day.coords, absolute=True)
+
+        open_day_win = self._get_window(title='Новый операционный период')
+        date_checkbox = open_day_win['CheckBox3'].wrapper_object()
+        sleep(1)
+        if date_checkbox.get_check_state() == 0:
+            date_checkbox.click()
+        try:
+            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        except ElementNotEnabled:
+            open_day_win['CheckBox3'].wrapper_object().click()
+            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.next_date_str)
+        branch_checkbox = open_day_win['CheckBox2'].wrapper_object()
+        if branch_checkbox.get_check_state() == (1 if main_branch_selected else 0):
+            branch_checkbox.click()
+        sleep(.5)
+        open_day_win['OK'].wrapper_object().click()
+        try:
+            confirm_win = self._get_window(title='Подтверждение', timeout=5)
+            button = 'Да' if self.prod else 'Нет'
+            confirm_win[button].wrapper_object().click()
+        except TimingsTimeoutError:
+            pass
 
     def step1(self) -> None:
         # выбор режима COPPER
@@ -308,7 +346,7 @@ class Actions:
         main_win = self.app.window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win)
-        self._reset_to_00(_window=main_win)
+        self._reset_to_00(main_win=main_win)
 
         # Регламентарная процедура 2
         self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
@@ -431,12 +469,16 @@ class Actions:
 
         self._select_all_branches(_window=main_win)
         self._close_day(main_win=main_win)
-        self._reset_to_00(_window=main_win)
+        self._reset_to_00(main_win=main_win)
         self._close_day(main_win=main_win, main_branch_selected=True)
+
         self._change_day(_date=self.today.next_date_str)
         self._refresh(_window=main_win)
-        self._change_day(_date=self.today.date_str)
-        self._refresh(_window=main_win)
+
+        self._select_all_branches(_window=main_win)
+        self._reset_to_00(main_win=main_win)
+        main_win.click_input(button='left', coords=self.buttons.open_oper_day.coords, absolute=True)
+        self._open_day(main_win=main_win, main_branch_selected=True)
         pass
 
     def step8(self) -> None:
@@ -492,7 +534,7 @@ class Actions:
 
         # WAIT FOR END
 
-        self._reset_to_00(_window=main_win)
+        self._reset_to_00(main_win=main_win)
         self._refresh(_window=main_win)
 
         main_win.click_input(button='left', coords=self.buttons.reg_procedure_1.coords, absolute=True)
@@ -506,7 +548,15 @@ class Actions:
             procedure='1'
         )
 
-        pass
+        main_win.click_input(button='left', coords=self.buttons.reg_procedure_4.coords, absolute=True)
+        procedure_win = self._get_window(title='Регламентная процедура 4')
+        self._fill_procedure_form(
+            procedure_win=procedure_win,
+            main_win=main_win,
+            main_branch_selected=True,
+            file_name='reg_procedure_4_00',
+            procedure='4'
+        )
 
     def step10(self):
         self.notifier.send_notification('step10')
@@ -543,22 +593,54 @@ class Actions:
         self.notifier.send_notification('end step10')
         pass
 
+    def exists_950(self, date: str):
+        self._choose_mode(mode='EXTRCT')
+
+        filter_win = self._get_window(title='Фильтр')
+        filter_win['Edit8'].wrapper_object().set_text(text=date)
+        filter_win['OKButton'].wrapper_object().click()
+        sleep(2)
+
+        confirm_win = self.app.window(title='Подтверждение')
+        if confirm_win.exists():
+            confirm_win.close()
+            filter_win.close()
+            return False
+        vypisky_win = self._get_window(title='Выписки')
+        vypisky_win.close()
+        return True
+
     def run(self) -> None:
         # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
         # for method in method_list:
         #     getattr(self, method)()
-        # self._choose_mode(mode='COPPER')
-        # main_win = self._get_window(title='Состояние операционных периодов')
-        # self._get_buttons(main_win=main_win)
-        # self.step1()
-        # self.step2()
-        # self.step3()
-        # self.step4()
-        # self.step5()
+
+        if not self.exists_950(self.today.date_str):
+            self.app.kill()
+            return
+
+        # print('\t\t\t', self.exists_950('09.02.23'), self.today.date_str)
+        # self._change_day(_date='08.02.23')
+        # print('\t\t\t', self.exists_950('08.02.23'), '08.02.23')
+        # self._change_day(_date='07.02.23')
+        # print('\t\t\t', self.exists_950('07.02.23'), '07.02.23')
+        # self._change_day(_date='10.02.23')
+        # print('\t\t\t', self.exists_950('10.02.23'), '10.02.23')
+        #
+        # self._change_day(_date=self.today.date_str)
+
+        self._choose_mode(mode='COPPER')
+        main_win = self._get_window(title='Состояние операционных периодов')
+        self._get_buttons(main_win=main_win)
+        self.step1()
+        self.step2()
+        self.step3()
+        self.step4()
+        self.step5()
         # self.step6()
-        # self.step7()
-        self.step8()
-        # self.step9()
-        # self.step10()
+        self.step7()
+        # self.step8()
+        self.step9()
+        self.step10()
 
         pass
