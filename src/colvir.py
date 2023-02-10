@@ -35,12 +35,12 @@ class Colvir:
 
     def run(self) -> None:
         if self.retry_count == 3:
-            self.args['notifier'].send_notification(message='Не удалось запустить Colvir')
+            self.args['notifier'].send_message(message='Не удалось запустить Colvir')
             return
 
         # with TimingManager(timing='slow'):
         try:
-            self.args['notifier'].send_notification(message='Запуск Colvir')
+            self.args['notifier'].send_message(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
             self.login()
             sleep(4)
@@ -61,7 +61,7 @@ class Colvir:
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
             self.app: Application = Application(backend='win32').connect(process=self.pid)
         try:
-            self.args['notifier'].send_notification(message='Успешный вход в Colvir')
+            self.args['notifier'].send_message(message='Успешный вход в Colvir')
             self.confirm_warning()
             sleep(1)
         except (ElementNotFoundError, MatchError):

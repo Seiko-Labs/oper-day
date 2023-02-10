@@ -23,6 +23,7 @@ class DateInfo:
     weekday_str: str = None
     next_date_str: str = None
     prev_date_str: str = None
+    next_work_date_str: str = None
 
     def __post_init__(self):
         if isinstance(self.date, str):

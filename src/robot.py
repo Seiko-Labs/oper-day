@@ -35,6 +35,14 @@ class Robot:
 
         work_status = scraper.get_work_status(today=today.date, dates=date_infos)
 
+        i = 1
+        while True:
+            date = today.date + timedelta(days=i)
+            if scraper.get_work_status(today=date, dates=date_infos) == WorkStatus.WORK:
+                self.args['today'].next_work_date_str = DateInfo(date=date).date_str
+                break
+            i += 1
+
         if work_status == WorkStatus.LONG:
             self.args['today'] = DateInfo(date=today.date - timedelta(days=1), is_work_day=False)
 
@@ -42,8 +50,9 @@ class Robot:
 
     def run(self) -> None:
         if not self.is_work_day():
-            self.args['notifier'].send_notification(message='Не рабочий день. Завершаем работу.')
-            return
+            pass
+            # self.args['notifier'].send_message(message='Не рабочий день. Завершаем работу.')
+            # return
 
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
         colvir: Colvir = Colvir(**self.args)

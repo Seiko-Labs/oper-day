@@ -24,11 +24,11 @@ def main(env: str) -> None:
         'credentials': Credentials(usr=colvir_usr, psw=colvir_psw),
         'process': Process(name=process_name, path=process_path),
         'notifier': TelegramNotifier(chat_id=os.getenv(f'CHAT_ID_{env}'), session=session),
-        # 'today': datetime.date(2023, 2, 8),
+        # 'today': datetime.date(2023, 2, 10),
         'session': session,
     }
 
-    args['notifier'].send_notification('Робот начинает работу.')
+    args['notifier'].send_message('Робот начинает работу.')
     try:
         robot: Robot = Robot(**args)
         robot.run()

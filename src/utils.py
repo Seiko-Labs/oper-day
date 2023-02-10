@@ -1,3 +1,6 @@
+import os
+import shutil
+import openpyxl
 import psutil
 from psutil import Process
 import pywinauto
@@ -89,8 +92,8 @@ class Utils:
         return [{col: val.strip() for col, val in zip(header, row)} for row in data_rows]
 
     @staticmethod
-    def is_reg_procedure_ready(file_name: str, reg_num: str, delay: int = 5) -> bool:
-        data = Utils.text_to_dicts(file_name=file_name)
+    def is_reg_procedure_ready(file_path: str, reg_num: str, delay: int = 5) -> bool:
+        data = Utils.text_to_dicts(file_path=file_path)
         if not data:
             sleep(delay)
             return False
@@ -103,6 +106,29 @@ class Utils:
             sleep(delay)
             return False
         return True
+
+    @staticmethod
+    def is_correct_file(root: str, xls_file_name: str) -> bool:
+        xls_file_path = os.path.join(root, xls_file_name)
+        if not os.path.exists(xls_file_path):
+            return False
+        shutil.copyfile(src=xls_file_path, dst=f'{xls_file_path}_copy.xls')
+        xls_file_path = f'{xls_file_path}_copy.xls'
+        xlsx_file_path = xls_file_path + 'x'
+
+        excel = win32.Dispatch('Excel.Application')
+        if not os.path.exists(path=xlsx_file_path):
+            wb = excel.Workbooks.Open(xls_file_path)
+            wb.SaveAs(xlsx_file_path, FileFormat=51)
+            wb.Close()
+        excel.Quit()
+
+        workbook = openpyxl.load_workbook(xlsx_file_path, data_only=True)
+        sheet = workbook.active
+        os.unlink(xlsx_file_path)
+        os.unlink(xls_file_path)
+
+        return next((True for row in sheet.iter_rows(max_row=50) for cell in row if cell.has_style), False)
 
     @staticmethod
     def type_keys(_window, keystrokes: str, step_delay: float = .1) -> None:

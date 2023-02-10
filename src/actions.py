@@ -19,6 +19,7 @@ from bot_notification import TelegramNotifier
 class Button:
     coords: Tuple[int, int]
     name: str
+    filled: bool = False
 
 
 @dataclass
@@ -31,6 +32,9 @@ class Buttons:
     remove_reg_procedure_4: Button = Button(coords=(0, 0), name='Снять признак выполнения регламентной процедуры 4')
     refresh: Button = Button(coords=(0, 0), name='Обновить список')
     tasks: Button = Button(coords=(0, 0), name='Все задания на обработку')
+    operations: Button = Button(coords=(0, 0), name='Выполнить операцию')
+    save: Button = Button(coords=(0, 0), name='Сохранить изменения (PgDn)')
+    filled_count: int = 0
 
 
 class Actions:
@@ -47,7 +51,7 @@ class Actions:
         if today.date != dt.now().date():
             self._change_day(today.date_str)
 
-    def _get_buttons(self, main_win: WindowSpecification, pixel_step: int = 5):
+    def _get_buttons(self, main_win: WindowSpecification, pixel_step: int = 5, offset: int = 1):
         status_win = self.app.window(title_re='Банковская система.+')
         rectangle = main_win['Static0'].rectangle()
         mid_point = rectangle.mid_point()
@@ -55,7 +59,7 @@ class Actions:
         left_border = rectangle.left
         i, x, y = 0, left_border, mid_point.y
 
-        while x <= mid_point.x:
+        while self.buttons.filled_count < 8:
             x, y = left_border + i * pixel_step, mid_point.y
             main_win.move_mouse_input(coords=(x, y), absolute=True)
             i += 1
@@ -64,8 +68,50 @@ class Actions:
                 continue
             for field in fields(self.buttons):
                 button = getattr(self.buttons, field.name)
-                if button_name == button.name:
-                    button.coords = (x, y)
+                if isinstance(button, Button) and button_name == button.name and button.filled is False:
+                    button.coords = (x + offset, y)
+                    button.filled = True
+                    self.buttons.filled_count += 1
+
+        self._choose_mode(mode='SORDPAY')
+        filter_win = self._get_window(title='Фильтр')
+        filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit2'].wrapper_object().set_text('1')
+        filter_win['Edit4'].wrapper_object().set_text('1')
+        sleep(1)
+        filter_win['OK'].wrapper_object().click()
+
+        main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
+        self.utils.type_keys(main_win, '{F12}')
+
+        template_win = self._get_window(title='Шаблоны платежей')
+        self.utils.type_keys(template_win, '{F9}')
+
+        filter_win2 = self._get_window(title='Фильтр')
+        filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
+
+        order_win = self._get_window(title='Мемориальный ордер', timeout=360)
+
+        rectangle = order_win['Static0'].rectangle()
+        mid_point = rectangle.mid_point()
+        order_win.move_mouse_input(coords=(mid_point.x, mid_point.y), absolute=True)
+        left_border = rectangle.left
+        i, x, y = 0, left_border, mid_point.y
+
+        while self.buttons.filled_count < 10:
+            x, y = left_border + i * pixel_step, mid_point.y
+            order_win.move_mouse_input(coords=(x, y), absolute=True)
+            i += 1
+            button_name = status_win['StatusBar'].window_text().strip()
+            if button_name == 'Сохранить изменения (PgDn)':
+                self.buttons.save.coords = (x + offset, y)
+                self.buttons.filled_count += 1
+            elif button_name == 'Выполнить операцию':
+                self.buttons.operations.coords = (x + offset, y)
+                self.buttons.filled_count += 1
+        order_win.close()
+        main_win.close()
 
     def _choose_mode(self, mode: str) -> None:
         mode_win = self.app.window(title='Выбор режима')
@@ -77,24 +123,19 @@ class Actions:
             os.unlink(fr'C:\Temp\{name}.xls')
 
         file_win = self.app.window(title='Выберите файл для экспорта')
-        file_win['Edit0'].wrapper_object().set_text(text=name)
-        file_win.wrapper_object().send_keystrokes('~')
-
-        # confirm_win = self.app.window(title='Confirm Save As')
-        # sleep(2)
-        # if confirm_win.exists():
-        #     confirm_win['&Yes'].wrapper_object().click()
+        file_win['Edit0'].wrapper_object().click_input()
+        file_win['Edit0'].wrapper_object().type_keys(f'{name}~')
 
         sort_win = self._get_window(title='Сортировка', wait_for='exists')
         if add_col:
             sort_win.type_keys(f'{19 * "{DOWN}"}{{SPACE}}')
         sort_win['OK'].wrapper_object().click()
 
-    def _wait_for_reg_finish(self, _window, file_name: str, procedure: str, main_branch_selected: bool = False, delay: int = 10) -> None:
+    def _wait_for_reg_finish(self, main_win, file_name: str, procedure: str, main_branch_selected: bool = False, delay: int = 10) -> None:
         while True:
             self.utils.kill_all_processes(proc_name='EXCEL')
-            self._refresh(_window)
-            self.utils.type_keys(_window, '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
+            self._refresh(main_win)
+            self.utils.type_keys(main_win, '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
 
             self._save_file(name=file_name)
 
@@ -150,13 +191,6 @@ class Actions:
         return self.utils.text_to_dicts(file_path=temp_file_path)
 
     def _refresh(self, _window: WindowSpecification) -> None:
-        # window_text = _window.window_text()
-        # keystrokes = ''
-        # if window_text == 'Состояние операционных периодов':
-        #     keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}{UP}~'
-        # elif window_text == 'Задания на обработку операционных периодов':
-        #     keystrokes = '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{DOWN}~'
-        # self.utils.type_keys(_window, keystrokes)
         _window.click_input(button='left', coords=self.buttons.refresh.coords, absolute=True)
 
     def _select_all_branches(self, _window, to_bottom: bool = False) -> None:
@@ -213,11 +247,11 @@ class Actions:
         date_checkbox = procedure_win[checkbox].wrapper_object()
         if date_checkbox.get_check_state() == 0:
             sleep(1)
-            date_checkbox.click()
+            date_checkbox.click_input()
         try:
             procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         except ElementNotEnabled:
-            procedure_win[checkbox].wrapper_object().click()
+            procedure_win['CheckBox3'].wrapper_object().click_input()
             procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
 
         if main_branch_selected:
@@ -226,11 +260,14 @@ class Actions:
                 branch_checkbox.click()
         procedure_win['OK'].wrapper_object().click()
         confirm_win = self._get_window(title='Подтверждение')
-        confirm_win[button].wrapper_object().click()
+        if button == 'Нет':
+            confirm_win.type_keys('{ESC}')
+        else:
+            confirm_win.type_keys('~')
 
         if self.prod:
             self._wait_for_reg_finish(
-                _window=main_win,
+                main_win=main_win,
                 file_name=file_name,
                 procedure=procedure,
                 main_branch_selected=main_branch_selected
@@ -254,9 +291,12 @@ class Actions:
         sleep(.5)
         close_day_win['OK'].wrapper_object().click()
         try:
-            confirm_win = self._get_window(title='Подтверждение', timeout=5)
             button = 'Да' if self.prod else 'Нет'
-            confirm_win[button].wrapper_object().click()
+            confirm_win = self._get_window(title='Подтверждение', timeout=5)
+            if button == 'Нет':
+                confirm_win.type_keys('{ESC}')
+            else:
+                confirm_win.type_keys('~')
         except TimingsTimeoutError:
             pass
 
@@ -286,10 +326,6 @@ class Actions:
             pass
 
     def step1(self) -> None:
-        # выбор режима COPPER
-        # if not self.prod:
-        #     self._choose_mode(mode='COPPER')
-
         # окно Состояние операционных периодов
         main_win = self._get_window(title='Состояние операционных периодов')
 
@@ -318,15 +354,12 @@ class Actions:
         )
 
     def step2(self) -> None:
-        # if not self.prod:
-        #     self._choose_mode(mode='COPPER')
-
         main_win = self._get_window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win, to_bottom=True)
 
         # Регламентарная процедура 2
-        self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
+        main_win.click_input(button='left', coords=self.buttons.reg_procedure_2.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 2')
 
         self._fill_procedure_form(
@@ -337,19 +370,14 @@ class Actions:
             procedure='2'
         )
 
-        self._select_all_branches(_window=main_win)
-
     def step3(self) -> None:
-        # if not self.prod:
-        #     self._choose_mode(mode='COPPER')
-
         main_win = self.app.window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win)
         self._reset_to_00(main_win=main_win)
 
         # Регламентарная процедура 2
-        self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}р{VK_SHIFT up}{DOWN}~')
+        main_win.click_input(button='left', coords=self.buttons.reg_procedure_2.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 2')
 
         self._fill_procedure_form(
@@ -359,13 +387,15 @@ class Actions:
             file_name='reg_procedure_2_00',
             procedure='2'
         )
+        main_win.close()
 
     def step4(self) -> None:
         self._choose_mode(mode='EXTRCT')
 
         filter_win = self._get_window(title='Фильтр')
 
-        filter_win['Edit8'].wrapper_object().set_text(text=self.today.date_str)
+        # filter_win['Edit8'].wrapper_object().set_text(text=self.today.date_str)
+        filter_win['Edit8'].wrapper_object().set_text(text='08.02.22')
         filter_win['OKButton'].wrapper_object().click()
 
         main_win = self._get_window(title='Выписки')
@@ -447,44 +477,106 @@ class Actions:
         self.utils.type_keys(template_win, '{F9}')
 
         filter_win2 = self._get_window(title='Фильтр')
-        filter_win2['Edit2'].wrapper_object().set_text(text='Вечер')
-        filter_win2['OK'].wrapper_object().click()
-
-        template_win['OK'].wrapper_object().click()
+        filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
 
         order_win = self._get_window(title='Мемориальный ордер', timeout=360)
 
         remainder_sum = ''.join(re.findall(r'[\d.]', order_win['Edit4'].wrapper_object().window_text().strip()))
-        order_win['Edit26'].wrapper_object().set_text(text=remainder_sum)
+        remainder_sum = '0.01' if remainder_sum == '0.00' else remainder_sum
+        order_win['Edit26'].type_keys(f'{remainder_sum}~', pause=.1)
+        sleep(2)
+        order_win.click_input(button='left', coords=self.buttons.save.coords, absolute=True)
+        sleep(4)
 
-        self.utils.type_keys(_window=order_win, keystrokes='{PGDN}')
+        order_win.close()
+        sleep(2)
+
+        main_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
+        main_win.type_keys('{DOWN}', pause=.1)
+
+        sleep(2)
+        main_win.close()
 
         pass
 
+    def _wait_for_day_procedure_end(self, main_win, file_name: str, procedure_type: str,
+                                    main_branch_selected: bool = False, delay: int = 10) -> None:
+        while True:
+            self.utils.kill_all_processes(proc_name='EXCEL')
+            self._refresh(main_win)
+            self.utils.type_keys(main_win, '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
+
+            self._save_file(name=file_name)
+
+            sleep(2)
+            file_path: str = rf'C:\Temp\{file_name}.xls'
+            while not os.path.isfile(path=file_path):
+                sleep(2)
+            self.utils.kill_all_processes(proc_name='EXCEL')
+
+            rows = self.utils.text_to_dicts(file_path)
+
+            if procedure_type == 'close':
+                date_key = 'Закрыты'
+                date = self.today.date_str
+            else:
+                date_key = 'Открыты'
+                date = self.today.next_date_str
+
+            if main_branch_selected:
+                data = [row for row in rows if
+                        row['Код подразделения'] == '00' and row[f'{date_key} по дату'] == date]
+            else:
+                data = [row for row in rows
+                        if row['Код подразделения'] != '00' and row[f'{date_key} по дату'] == date]
+
+            if not data:
+                break
+
+            sleep(delay)
+
+        print('SUCCESS')
+
     def step7(self) -> None:
-        # if not self.prod:
-        #     self._choose_mode(mode='COPPER')
+        self._choose_mode(mode='COPPER')
 
         main_win = self._get_window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win)
         self._close_day(main_win=main_win)
+        if self.prod:
+            self._wait_for_day_procedure_end(
+                main_win=main_win,
+                file_name='close_day_all',
+                procedure_type='close'
+            )
+
         self._reset_to_00(main_win=main_win)
         self._close_day(main_win=main_win, main_branch_selected=True)
+        if self.prod:
+            self._wait_for_day_procedure_end(
+                main_win=main_win,
+                file_name='close_day_00',
+                procedure_type='close',
+                main_branch_selected=True
+            )
 
-        self._change_day(_date=self.today.next_date_str)
+        self._change_day(_date=self.today.next_work_date_str)
         self._refresh(_window=main_win)
 
         self._select_all_branches(_window=main_win)
         self._reset_to_00(main_win=main_win)
         main_win.click_input(button='left', coords=self.buttons.open_oper_day.coords, absolute=True)
         self._open_day(main_win=main_win, main_branch_selected=True)
-        pass
+        if self.prod:
+            self._wait_for_day_procedure_end(
+                main_win=main_win,
+                file_name='open_day_00',
+                procedure_type='open',
+                main_branch_selected=True
+            )
 
     def step8(self) -> None:
-        # if not self.prod:
-        #     return
-
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
@@ -502,19 +594,35 @@ class Actions:
         self.utils.type_keys(template_win, '{F9}')
 
         filter_win2 = self._get_window(title='Фильтр')
-        filter_win2['Edit2'].wrapper_object().set_text(text='Утро2')
-        filter_win2['OK'].wrapper_object().click()
+        filter_win2['Edit2'].wrapper_object().type_keys('Утро~~', pause=.2)
 
-        template_win['OK'].wrapper_object().click()
+        order_win = self._get_window(title='Мемориальный ордер', timeout=360)
 
-        order_win = self._get_window(title='Мемориальный ордер')
+        remainder_sum = ''.join(re.findall(r'[\d.]', order_win['Edit4'].wrapper_object().window_text().strip()))
+        if remainder_sum == '0.00':
+            remainder_sum = '0.02'
+        order_win['Edit26'].type_keys(f'{remainder_sum}~', pause=.1)
+        sleep(1)
+        order_win.click_input(button='left', coords=self.buttons.save.coords, absolute=True)
+        sleep(4)
 
+        order_win.wait(wait_for='active', timeout=360)
+        order_win.close()
+        sleep(2)
+        main_win.type_keys('~')
+        order_win = self._get_window(title='Мемориальный ордер', timeout=360)
+        order_win.type_keys('{F4}')
+        order_win['Edit58'].type_keys('13~')
+        order_win.click_input(button='left', coords=self.buttons.save.coords, absolute=True)
+        sleep(2)
+        order_win.close()
+
+        main_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
+        main_win.type_keys('{DOWN}', pause=.1)
+        main_win.close()
         pass
 
     def step9(self) -> None:
-        # if not self.prod:
-        #     self._choose_mode(mode='COPPER')
-
         main_win = self._get_window(title='Состояние операционных периодов')
         self._select_all_branches(_window=main_win)
         # Регламентная процедура 1
@@ -529,8 +637,6 @@ class Actions:
             file_name='reg_procedure_1_00',
             procedure='1'
         )
-
-        main_win.wait(wait_for='visible', timeout=20)
 
         # WAIT FOR END
 
@@ -559,9 +665,7 @@ class Actions:
         )
 
     def step10(self):
-        self.notifier.send_notification('step10')
-        # if not self.prod:
-        #     self._choose_mode(mode='COPPER')
+        self.notifier.send_message('step10')
 
         main_win = self._get_window(title='Состояние операционных периодов')
         self.utils.type_keys(_window=main_win, keystrokes='{F5}')
@@ -579,8 +683,13 @@ class Actions:
         report_win['Экспорт в файл...'].wrapper_object().click()
 
         file_win = self._get_window(title='Файл отчета ')
+        report_root = r'C:\Temp'
+        report_name = 'PC05_101.xls'
+        report_path = os.path.join(report_root, report_name)
+        file_win['Edit2'].wrapper_object().set_text(text=report_root)
+        file_win['Edit4'].wrapper_object().set_text(text=report_name)
         try:
-            file_win['ComboBox'].wrapper_object().select(2)
+            file_win['ComboBox'].wrapper_object().select(11)
         except (IndexError, ValueError):
             pass
         file_win['OK'].wrapper_object().click()
@@ -589,8 +698,17 @@ class Actions:
         params_win['Edit2'].wrapper_object().set_text(text=self.robot_time.start_str)
         self.robot_time.update()
         params_win['Edit4'].wrapper_object().set_text(text=self.robot_time.end_str)
-        # params_win['OK'].wrapper_object().click()
-        self.notifier.send_notification('end step10')
+        params_win['OK'].wrapper_object().click()
+
+        while not self.utils.is_correct_file(root=report_root, xls_file_name=report_name):
+            if not os.path.exists(path=report_path):
+                continue
+            if os.path.getsize(filename=report_path) == 0:
+                continue
+        print('success')
+
+        self.notifier.send_message(f'Отчет сохранился')
+        self.notifier.send_message(message=report_path, is_document=True)
         pass
 
     def exists_950(self, date: str):
@@ -611,36 +729,27 @@ class Actions:
         return True
 
     def run(self) -> None:
-        # method_list = [func for func in dir(self) if callable(getattr(self, func)) and 'step' in func]
-        # for method in method_list:
-        #     getattr(self, method)()
-
-        if not self.exists_950(self.today.date_str):
-            self.app.kill()
-            return
-
-        # print('\t\t\t', self.exists_950('09.02.23'), self.today.date_str)
-        # self._change_day(_date='08.02.23')
-        # print('\t\t\t', self.exists_950('08.02.23'), '08.02.23')
-        # self._change_day(_date='07.02.23')
-        # print('\t\t\t', self.exists_950('07.02.23'), '07.02.23')
-        # self._change_day(_date='10.02.23')
-        # print('\t\t\t', self.exists_950('10.02.23'), '10.02.23')
-        #
-        # self._change_day(_date=self.today.date_str)
+        # if not self.exists_950(self.today.date_str):
+        #     self.app.kill()
+        #     return
 
         self._choose_mode(mode='COPPER')
         main_win = self._get_window(title='Состояние операционных периодов')
         self._get_buttons(main_win=main_win)
+
         self.step1()
         self.step2()
         self.step3()
         self.step4()
         self.step5()
-        # self.step6()
+        self.step6()
         self.step7()
-        # self.step8()
+        self.step8()
         self.step9()
+
+        # self._choose_mode(mode='COPPER')
         self.step10()
 
+        # self.step6()
+        # self.step8()
         pass
