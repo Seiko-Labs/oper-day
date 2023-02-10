@@ -1,4 +1,6 @@
 import os
+
+import dotenv
 import requests
 from requests.adapters import HTTPAdapter
 
@@ -16,5 +18,5 @@ class TelegramNotifier:
         api_url = f'https://api.telegram.org/bot{self.token}/{message_type}'
         args = {'url': api_url, 'params': self.api_params, 'json': {'text': message}}
         if is_document:
-            args['files'] = {'document': message}
+            args['files'] = {'document': open(file=message, mode='rb')}
         return self.session.post(**args)
