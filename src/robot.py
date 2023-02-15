@@ -1,24 +1,51 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Any
 import dotenv
 import oracledb
+import requests
 from colvir import Colvir
-from data_structures import Notifiers, Credentials, Process, DateInfo, RobotWorkTime
+from data_structures import Notifiers, Credentials, Process, DateInfo, WorkStatus, RobotWorkTime
 from utils import Utils
+from work_calendar import CalendarScraper
 
 
 class Robot:
-    def __init__(self, credentials: Credentials, process: Process, notifiers: Notifiers, today: datetime.date) -> None:
+    def __init__(self, credentials: Credentials, process: Process, notifiers: Notifiers,
+                 session: requests.Session, today: datetime.date = datetime.now().date()) -> None:
         self.restricted_pids: List[int] = []
         dotenv.load_dotenv()
         self.utils = Utils()
+        self.session = session
 
         self.credentials = credentials
         self.process = process
         self.notifiers = notifiers
         self.today = DateInfo(date=today)
         self.robot_time = RobotWorkTime(start=datetime.now())
+
+    def is_work_day(self) -> bool:
+        scraper = CalendarScraper(
+            year=self.today.date.year,
+            backup_file=fr'C:\Users\robot.ad\Desktop\oper_day\resourses\{self.today.date.year}.html',
+            session=self.session
+        )
+        date_infos: List[DateInfo] = scraper.date_infos
+
+        work_status = scraper.get_work_status(today=self.today.date, dates=date_infos)
+
+        i = 1
+        while True:
+            date = self.today.date + timedelta(days=i)
+            if scraper.get_work_status(today=date, dates=date_infos) == WorkStatus.WORK:
+                self.today.next_work_date_str = DateInfo(date=date).date_str
+                break
+            i += 1
+
+        if work_status == WorkStatus.LONG:
+            self.today = DateInfo(date=self.today.date - timedelta(days=1), is_work_day=False)
+
+        return True if work_status in (WorkStatus.WORK, WorkStatus.LONG) else False
 
     @staticmethod
     def emergency_call() -> None:
@@ -48,6 +75,11 @@ class Robot:
             connection.commit()
 
     def run(self) -> None:
+        if not self.is_work_day():
+            pass
+            # self.args['notifiers'].log.send_message(message='Не рабочий день. Завершаем работу.')
+            # return
+
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
 
         colvir: Colvir = Colvir(
@@ -61,5 +93,5 @@ class Robot:
             colvir.run()
         except (RuntimeError, Exception) as e:
             self.notifiers.alert.send_message(message='Не удалось запустить Colvir')
-            # self.emergency_call()
+            self.emergency_call()
             raise e
