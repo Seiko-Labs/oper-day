@@ -2,13 +2,10 @@ import os
 import sys
 import warnings
 import dotenv
-import pywinauto.timings
-
-from data_structures import Credentials, Process
+import requests
+from data_structures import Credentials, Process, Notifiers
 from robot import Robot
 from bot_notification import TelegramNotifier
-import datetime
-import requests
 
 
 def main(env: str) -> None:
@@ -20,17 +17,23 @@ def main(env: str) -> None:
 
     session = requests.Session()
 
-    args = {
-        'credentials': Credentials(usr=colvir_usr, psw=colvir_psw),
-        'process': Process(name=process_name, path=process_path),
-        'notifier': TelegramNotifier(chat_id=os.getenv(f'CHAT_ID_{env}'), session=session),
-        # 'today': datetime.date(2023, 2, 10),
-        'session': session,
-    }
+    credentials = Credentials(usr=colvir_usr, psw=colvir_psw)
+    process = Process(name=process_name, path=process_path)
+    notifiers = Notifiers(
+        log=TelegramNotifier(token=os.getenv('TOKEN_LOG'), chat_id=os.getenv(f'CHAT_ID_LOG'), session=session),
+        alert=TelegramNotifier(token=os.getenv('TOKEN_ALERT'), chat_id=os.getenv(f'CHAT_ID_ALERT'), session=session)
+    )
+    # today = datetime.date(2023, 2, 10)
+    session = session
 
-    args['notifier'].send_message('Робот начинает работу.')
+    notifiers.log.send_message('Робот начинает работу.')
     try:
-        robot: Robot = Robot(**args)
+        robot: Robot = Robot(
+            credentials=credentials,
+            process=process,
+            notifiers=notifiers,
+            session=session,
+        )
         robot.run()
     except KeyboardInterrupt:
         session.close()
