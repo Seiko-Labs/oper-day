@@ -98,7 +98,9 @@ class CalendarScraper:
             response: requests.Response = session.get(url=self.calendar_url)
             response.raise_for_status()
 
-            html: str = minify(response.text, minify_js=True, minify_css=True)
+            soup = BeautifulSoup(response.text, 'html.parser', parse_only=SoupStrainer(name='div', attrs={'class': 'app-wrapper'}))
+
+            html: str = minify(str(soup), minify_js=True, minify_css=True)
             file_html: str = self._load_backup()
             if html == file_html:
                 return html
