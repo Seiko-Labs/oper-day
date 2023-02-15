@@ -8,11 +8,11 @@ from robot import Robot
 from bot_notification import TelegramNotifier
 
 
-def main(env: str) -> None:
+def main() -> None:
     warnings.simplefilter(action='ignore', category=UserWarning)
     dotenv.load_dotenv()
 
-    colvir_usr, colvir_psw = os.getenv(f'COLVIR_USR_{env}'), os.getenv(f'COLVIR_PSW_{env}')
+    colvir_usr, colvir_psw = os.getenv(f'COLVIR_USR'), os.getenv(f'COLVIR_PSW')
     process_name, process_path = 'COLVIR', os.getenv('COLVIR_PROCESS_PATH')
 
     session = requests.Session()
@@ -26,7 +26,7 @@ def main(env: str) -> None:
     # today = datetime.date(2023, 2, 10)
     session = session
 
-    notifiers.log.send_message('Робот начинает работу.')
+    # notifiers.log.send_message('Робот начинает работу.')
     try:
         robot: Robot = Robot(
             credentials=credentials,
@@ -41,4 +41,4 @@ def main(env: str) -> None:
 
 
 if __name__ == '__main__':
-    main(env=sys.argv[1])
+    main()
