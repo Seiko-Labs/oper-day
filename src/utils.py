@@ -1,18 +1,17 @@
 import os
+import re
 import shutil
+from itertools import islice
+from time import sleep
+from typing import List, Dict
 import openpyxl
 import psutil
-from psutil import Process
 import pywinauto
-from pywinauto.timings import Timings
-from pywinauto.base_wrapper import ElementNotEnabled
 import win32com.client as win32
-from typing import List, Dict
-import re
-from itertools import islice
+from psutil import Process
+from pywinauto.base_wrapper import ElementNotEnabled
+from pywinauto.timings import Timings
 from excel_converter import ExcelConverter
-from time import sleep
-from datetime import datetime as dt
 
 
 class BackendManager:
@@ -54,9 +53,9 @@ class Utils:
         self.excel_converter.convert(src_file=src_file, dst_file=dst_file, file_type=file_type)
 
     @staticmethod
-    def kill_process(pid) -> None:
-        p: Process = Process(pid)
-        p.terminate()
+    def kill_process(pid: int) -> None:
+        proc = Process(pid)
+        proc.terminate()
 
     @staticmethod
     def kill_all_processes(proc_name: str, restricted_pids: List[int] or None = None) -> None:
