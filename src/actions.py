@@ -147,19 +147,6 @@ class Actions:
             finished = not [row for row in self.utils.text_to_dicts(file_path)
                             if row['Исполнитель'] == 'Блокировка учетных записей']
 
-            # if procedure == '4' and main_branch_selected:
-            #     finished = not [row for row in self.utils.text_to_dicts(file_path)
-            #                     if row['Исполнитель'] == 'Блокировка учетных записей'
-            #                     and row['Код подр.'] == '00']
-            # elif procedure == '2' and not main_branch_selected:
-            #     finished = not [row for row in self.utils.text_to_dicts(file_path)
-            #                     if row['Исполнитель'] == 'Блокировка учетных записей'
-            #                     and row['Код подр.'] != '00']
-            # elif procedure == '2' and main_branch_selected:
-            #     finished = not [row for row in self.utils.text_to_dicts(file_path)
-            #                     if row['Исполнитель'] == 'Блокировка учетных записей'
-            #                     and row['Код подр.'] == '00']
-
             sleep(delay)
 
         self.notifiers.log.send_message(message=f'Процедура успешно обработана')
@@ -279,19 +266,12 @@ class Actions:
         confirm_win.type_keys('~')
         self.notifiers.log.send_message(message=f'Регламентная процедура начата')
 
-        # protocol_win = self._get_window(title='Протокол')
-        # protocol_win.close()
-        #
-        # self._reset_tasks()
-
         main_win.click_input(button='left', coords=self.buttons.tasks.coords, absolute=True)
         tasks_win = self._get_window(title='Задания на обработку операционных периодов')
 
         self._wait_for_reg_finish(
             main_win=tasks_win,
             file_name=file_name,
-            # procedure=procedure,
-            # main_branch_selected=main_branch_selected
         )
 
     def _close_day(self, main_win: WindowSpecification, main_branch_selected: bool = False) -> None:
@@ -344,14 +324,11 @@ class Actions:
     def step1(self) -> None:
         """DONE"""
 
-        # окно Состояние операционных периодов
         main_win = self._get_window(title='Состояние операционных периодов')
 
-        # Снять признак выполнения 4
         self.notifiers.log.send_message(message='Снятие признака выполнения 4 в режиме COPPER')
         main_win.click_input(button='left', coords=self.buttons.remove_reg_procedure_4.coords, absolute=True)
 
-        # Подтверждение "снятие признака выполнения 4"
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
             confirm_win.type_keys('~')
@@ -359,7 +336,6 @@ class Actions:
         except TimingsTimeoutError:
             pass
 
-        # Регламентарная процедура 4
         main_win.click_input(button='left', coords=self.buttons.reg_procedure_4.coords, absolute=True)
 
         procedure_win = self._get_window(title='Регламентная процедура 4', found_index=0)
@@ -377,7 +353,6 @@ class Actions:
 
         self._select_all_branches(_window=main_win, to_bottom=True)
 
-        # Регламентарная процедура 2
         self.notifiers.log.send_message(message=f'Регламентная процедура 2 в режиме COPPER')
         main_win.click_input(button='left', coords=self.buttons.reg_procedure_2.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 2')
@@ -395,7 +370,6 @@ class Actions:
         self._select_all_branches(_window=main_win)
         self._reset_to_00(main_win=main_win)
 
-        # Регламентарная процедура 2
         main_win.click_input(button='left', coords=self.buttons.reg_procedure_2.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 2')
         self.notifiers.log.send_message(message=f'Регламентная процедура 2 по 00 в режиме COPPER')
@@ -528,8 +502,6 @@ class Actions:
 
         sleep(2)
         main_win.close()
-
-        pass
 
     def _wait_for_day_procedure_end(self, main_win, file_name: str, procedure_type: str,
                                     main_branch_selected: bool = False, delay: int = 10) -> None:
@@ -691,7 +663,6 @@ class Actions:
     def step9(self) -> None:
         main_win = self._get_window(title='Состояние операционных периодов')
         self._select_all_branches(_window=main_win)
-        # Регламентная процедура 1
 
         self.notifiers.log.send_message(message=f'Начало регламентной процедуры 1 по филиалам')
 
@@ -805,10 +776,6 @@ class Actions:
         return True
 
     def run(self) -> None:
-        # if not self.exists_950(self.today.date_str):
-        #     self.app.kill()
-        #     return
-
         self._choose_mode(mode='COPPER')
         main_win = self._get_window(title='Состояние операционных периодов')
         self._get_buttons(main_win=main_win)
@@ -816,6 +783,11 @@ class Actions:
         self.step1()
         self.step2()
         self.step3()
+
+        while not self.exists_950(self.today.date_str):
+            self.notifiers.log.send_message(message=f'Ожидание выписки за {self.today.date_str} ...')
+            sleep(360)
+
         self.step4()
         self.step5()
         self.step6()
