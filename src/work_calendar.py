@@ -1,16 +1,13 @@
-import os
 import calendar
 import csv
 import json
 import locale
-from dataclasses import dataclass, asdict
-from datetime import date, datetime
+import os
+from datetime import date
 from typing import List, Dict
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
 from minify_html import minify
-import rich
-from itertools import islice
 from data_structures import DateInfo, WorkStatus
 
 
