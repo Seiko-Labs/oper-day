@@ -11,3 +11,4 @@ python-dotenv
 minify_html
 bs4
 pycountry
+oracledb
