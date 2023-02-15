@@ -1,5 +1,7 @@
 import datetime
 from dataclasses import dataclass
+from typing import Tuple
+from bot_notification import TelegramNotifier
 
 
 @dataclass
@@ -54,3 +56,32 @@ class RobotWorkTime:
     def update(self):
         self.end = datetime.datetime.now()
         self.end_str = self.end.strftime('%d.%m.%y %H:%M')
+
+
+@dataclass
+class Button:
+    coords: Tuple[int, int]
+    name: str
+    filled: bool = False
+
+
+@dataclass
+class Buttons:
+    open_oper_day: Button = Button(coords=(0, 0), name='Открыть новый операционный период')
+    close_oper_day: Button = Button(coords=(0, 0), name='Закрыть операционный период')
+    reg_procedure_1: Button = Button(coords=(0, 0), name='Регламентная процедура 1')
+    reg_procedure_2: Button = Button(coords=(0, 0), name='Регламентная процедура 2')
+    reg_procedure_4: Button = Button(coords=(0, 0), name='Регламентная процедура 4')
+    remove_reg_procedure_4: Button = Button(coords=(0, 0), name='Снять признак выполнения регламентной процедуры 4')
+    refresh: Button = Button(coords=(0, 0), name='Обновить список')
+    tasks: Button = Button(coords=(0, 0), name='Все задания на обработку')
+    tasks_refresh: Button = Button(coords=(0, 0), name='Обновить список')
+    operations: Button = Button(coords=(0, 0), name='Выполнить операцию')
+    save: Button = Button(coords=(0, 0), name='Сохранить изменения (PgDn)')
+    filled_count: int = 0
+
+
+@dataclass
+class Notifiers:
+    log: TelegramNotifier
+    alert: TelegramNotifier
