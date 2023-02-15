@@ -1,7 +1,6 @@
-import psutil
-import win32com.client as win32
-from typing import List, Dict
 import os
+from typing import Dict
+import win32com.client as win32
 
 
 class ExcelConverter:
