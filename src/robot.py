@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import List
 import dotenv
 import oracledb
 import requests
@@ -50,29 +50,31 @@ class Robot:
     @staticmethod
     def emergency_call() -> None:
         oracledb.init_oracle_client()
-        params: Dict[str, Any] = {
-            'user': os.getenv('ORACLE_USR'),
-            'password': os.getenv('ORACLE_PSW'),
-            'host': os.getenv('ORACLE_HOST'),
-            'port': os.getenv('ORACLE_PORT'),
-            'service_name': 'GCTI8TST',
-            'config_dir': r'C:\app\client\robot.ad\product\12.2.0\client_1\network\admin',
-        }
-        with oracledb.connect(**params) as connection:
-            cursor = connection.cursor()
 
-            last_record_id: int = cursor.execute(
-                'SELECT RECORD_ID FROM ocs.opovesheniye_robotom_po_colvir ORDER BY RECORD_ID DESC').fetchone()[0]
-            columns: str = 'RECORD_ID, CONTACT_INFO, CONTACT_INFO_TYPE, RECORD_TYPE, RECORD_STATUS,' \
-                           'CALL_RESULT, ATTEMPT, DAILY_FROM, DAILY_TILL, TZ_DBID, CHAIN_ID, CHAIN_N'
-            phone_number: str = '988079000000'
+        connection = oracledb.connect(
+            user=os.getenv('ORACLE_USR'),
+            password=os.getenv('ORACLE_PSW'),
+            host=os.getenv('ORACLE_HOST'),
+            port=int(os.getenv('ORACLE_PORT')),
+            service_name='GCTI8TST',
+            config_dir=r'C:\app\client\robot.ad\product\12.2.0\client_1\network\admin',
+        )
 
-            cursor.execute(f'''
-                INSERT INTO ocs.opovesheniye_robotom_po_colvir ({columns})
-                VALUES ({last_record_id + 1}, {phone_number}, 1, 2, 1, 28, 0, 39600, 72000, 134, 60, 0)
-            ''')
+        cursor = connection.cursor()
 
-            connection.commit()
+        last_record_id: int = cursor.execute(
+            'SELECT RECORD_ID FROM ocs.opovesheniye_robotom_po_colvir ORDER BY RECORD_ID DESC').fetchone()[0]
+        columns: str = 'RECORD_ID, CONTACT_INFO, CONTACT_INFO_TYPE, RECORD_TYPE, RECORD_STATUS,' \
+                       'CALL_RESULT, ATTEMPT, DAILY_FROM, DAILY_TILL, TZ_DBID, CHAIN_ID, CHAIN_N'
+        phone_number: str = '988079000000'
+
+        cursor.execute(f'''
+            INSERT INTO ocs.opovesheniye_robotom_po_colvir ({columns})
+            VALUES ({last_record_id + 1}, {phone_number}, 1, 2, 1, 28, 0, 39600, 72000, 134, 60, 0)
+        ''')
+
+        connection.commit()
+        connection.close()
 
     def run(self) -> None:
         if not self.is_work_day():
