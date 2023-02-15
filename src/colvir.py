@@ -1,46 +1,37 @@
-import os
-import re
-import datetime
-from datetime import datetime as dt
 from time import sleep
-from typing import List, Dict
+from typing import List
 import psutil
-from pywinauto import Desktop, Application, WindowSpecification
+from pywinauto import Desktop, Application
 from pywinauto.application import ProcessNotFoundError
-from pywinauto.application import TimeoutError as AppTimeoutError
-from pywinauto.base_wrapper import ElementNotEnabled, ElementNotVisible, InvalidElement
 from pywinauto.controls.hwndwrapper import DialogWrapper
-from pywinauto.controls.menuwrapper import MenuItem
-from pywinauto.controls.win32_controls import ButtonWrapper
 from pywinauto.findbestmatch import MatchError
-from pywinauto.findwindows import ElementNotFoundError, ElementAmbiguousError, WindowAmbiguousError, WindowNotFoundError
+from pywinauto.findwindows import ElementNotFoundError, ElementAmbiguousError
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
-from data_structures import Credentials, Process, DateInfo, RobotWorkTime
-from utils import Utils, TimingManager
-from itertools import islice
 from actions import Actions
-from bot_notification import TelegramNotifier
+from data_structures import Notifiers, Credentials, Process, DateInfo, RobotWorkTime
+from utils import Utils
 
 
 class Colvir:
     def __init__(self, credentials: Credentials, process: Process, today: DateInfo,
-                 robot_time: RobotWorkTime, notifier: TelegramNotifier) -> None:
+                 robot_time: RobotWorkTime, notifiers: Notifiers) -> None:
         self.credentials: Credentials = credentials
         self.process = process
         self.pid: int or None = None
         self.app: Application or None = None
         self.utils: Utils = Utils()
-        self.args = {'today': today, 'robot_time': robot_time, 'notifier': notifier}
+        self.today = today
+        self.robot_time = robot_time
+        self.notifiers = notifiers
         self.retry_count = 0
 
     def run(self) -> None:
         if self.retry_count == 3:
-            self.args['notifier'].send_message(message='Не удалось запустить Colvir')
-            return
+            raise RuntimeError('Не удалось запустить Colvir')
 
         # with TimingManager(timing='slow'):
         try:
-            self.args['notifier'].send_message(message='Запуск Colvir')
+            self.notifiers.log.send_message(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
             self.login()
             sleep(4)
@@ -61,13 +52,18 @@ class Colvir:
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
             self.app: Application = Application(backend='win32').connect(process=self.pid)
         try:
-            self.args['notifier'].send_message(message='Успешный вход в Colvir')
+            self.notifiers.log.send_message(message='Успешный вход в Colvir')
             self.confirm_warning()
             sleep(1)
         except (ElementNotFoundError, MatchError):
             self.retry()
             return
-        actions = Actions(app=self.app, **self.args)
+        actions = Actions(
+            app=self.app,
+            today=self.today,
+            robot_time=self.robot_time,
+            notifiers=self.notifiers,
+        )
         actions.run()
 
     def login(self) -> None:
