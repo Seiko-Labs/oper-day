@@ -29,7 +29,6 @@ class Colvir:
         if self.retry_count == 3:
             raise RuntimeError('Не удалось запустить Colvir')
 
-        # with TimingManager(timing='slow'):
         try:
             self.notifiers.log.send_message(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
