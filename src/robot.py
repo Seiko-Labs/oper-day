@@ -92,6 +92,7 @@ class Robot:
             robot_time=self.robot_time,
             notifiers=self.notifiers
         )
+
         try:
             colvir.run()
         except RuntimeError as e:
