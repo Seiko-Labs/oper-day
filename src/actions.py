@@ -149,8 +149,6 @@ class Actions:
 
             sleep(delay)
 
-        self.notifiers.log.send_message(message=f'Процедура успешно обработана')
-
     def _get_kvit_rows(self, _window: WindowSpecification) -> List[Dict[str, str]]:
         self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}д{VK_SHIFT up}{UP}~', step_delay=.2)
 
@@ -347,6 +345,7 @@ class Actions:
             main_branch_selected=True,
             file_name='reg_procedure_4',
         )
+        self.notifiers.log.send_message(message=f'Процедура 4 по 00 успешно обработана')
 
     def step2(self) -> None:
         main_win = self._get_window(title='Состояние операционных периодов')
@@ -363,6 +362,7 @@ class Actions:
             main_branch_selected=False,
             file_name='reg_procedure_2_all',
         )
+        self.notifiers.log.send_message(message=f'Процедура 2 по филиалам успешно обработана')
 
     def step3(self) -> None:
         main_win = self.app.window(title='Состояние операционных периодов')
@@ -381,6 +381,7 @@ class Actions:
             file_name='reg_procedure_2_00',
         )
         main_win.close()
+        self.notifiers.log.send_message(message=f'Процедура 2 по 00 успешно обработана')
 
     def step4(self) -> None:
         self._choose_mode(mode='EXTRCT')
@@ -540,8 +541,6 @@ class Actions:
 
             sleep(delay)
 
-        print('SUCCESS')
-
     def step7(self) -> None:
         self._choose_mode(mode='COPPER')
 
@@ -677,6 +676,7 @@ class Actions:
             main_branch_selected=False,
             file_name='reg_procedure_1_all',
         )
+        self.notifiers.log.send_message(message=f'Процедура 1 по филиалам успешно обработана')
 
         self._refresh(_window=main_win)
         self._select_all_branches(_window=main_win)
@@ -695,6 +695,7 @@ class Actions:
             main_branch_selected=True,
             file_name='reg_procedure_1_00',
         )
+        self.notifiers.log.send_message(message=f'Процедура 1 по 00 успешно обработана')
 
         self.notifiers.log.send_message(message=f'Ожидание завершения регламентной процедуры 1 по филиалам')
 
@@ -713,6 +714,7 @@ class Actions:
             main_branch_selected=True,
             file_name='reg_procedure_4_00',
         )
+        self.notifiers.log.send_message(message=f'Процедура 4 по 00 успешно обработана')
 
     def step10(self):
         self.notifiers.log.send_message('Начало выгрузки отчета')
