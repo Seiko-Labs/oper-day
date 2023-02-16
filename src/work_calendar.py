@@ -5,9 +5,11 @@ import locale
 import os
 from datetime import date
 from typing import List, Dict
+
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
 from minify_html import minify
+
 from data_structures import DateInfo, WorkStatus
 
 

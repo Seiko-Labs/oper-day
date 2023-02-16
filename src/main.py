@@ -1,10 +1,12 @@
 import os
 import warnings
+
 import dotenv
 import requests
+
+from bot_notification import TelegramNotifier
 from data_structures import Credentials, Process, Notifiers
 from robot import Robot
-from bot_notification import TelegramNotifier
 
 
 def main() -> None:

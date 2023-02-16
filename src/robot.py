@@ -1,9 +1,11 @@
 import os
 from datetime import datetime, timedelta
 from typing import List
+
 import dotenv
 import oracledb
 import requests
+
 from colvir import Colvir
 from data_structures import Notifiers, Credentials, Process, DateInfo, WorkStatus, RobotWorkTime
 from utils import Utils

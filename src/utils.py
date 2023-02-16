@@ -4,6 +4,7 @@ import shutil
 from itertools import islice
 from time import sleep
 from typing import List, Dict
+
 import openpyxl
 import psutil
 import pywinauto
@@ -11,6 +12,7 @@ import win32com.client as win32
 from psutil import Process
 from pywinauto.base_wrapper import ElementNotEnabled
 from pywinauto.timings import Timings
+
 from excel_converter import ExcelConverter
 
 
