@@ -2,15 +2,15 @@ from time import sleep
 from typing import List
 
 import psutil
-from pywinauto import Desktop, Application
+from pywinauto import Application, Desktop
 from pywinauto.application import ProcessNotFoundError
 from pywinauto.controls.hwndwrapper import DialogWrapper
 from pywinauto.findbestmatch import MatchError
-from pywinauto.findwindows import ElementNotFoundError, ElementAmbiguousError
+from pywinauto.findwindows import ElementAmbiguousError, ElementNotFoundError
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
 
 from actions import Actions
-from data_structures import Notifiers, Credentials, Process, DateInfo, RobotWorkTime
+from data_structures import Credentials, DateInfo, Notifiers, Process, RobotWorkTime
 from utils import Utils
 
 

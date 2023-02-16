@@ -7,7 +7,7 @@ import oracledb
 import requests
 
 from colvir import Colvir
-from data_structures import Notifiers, Credentials, Process, DateInfo, WorkStatus, RobotWorkTime
+from data_structures import Credentials, DateInfo, Notifiers, Process, RobotWorkTime, WorkStatus
 from utils import Utils
 from work_calendar import CalendarScraper
 

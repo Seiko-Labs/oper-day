@@ -3,7 +3,7 @@ import re
 import shutil
 from itertools import islice
 from time import sleep
-from typing import List, Dict
+from typing import Dict, List
 
 import openpyxl
 import psutil

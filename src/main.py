@@ -5,7 +5,7 @@ import dotenv
 import requests
 
 from bot_notification import TelegramNotifier
-from data_structures import Credentials, Process, Notifiers
+from data_structures import Credentials, Notifiers, Process
 from robot import Robot
 
 

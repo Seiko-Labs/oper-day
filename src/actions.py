@@ -3,14 +3,14 @@ import re
 from dataclasses import fields
 from datetime import datetime as dt
 from time import sleep
-from typing import List, Dict
+from typing import Dict, List
 
 from pywinauto import Application, WindowSpecification
 from pywinauto.base_wrapper import ElementNotEnabled
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
 
-from data_structures import Notifiers, DateInfo, RobotWorkTime, Buttons, Button
-from utils import Utils, BackendManager
+from data_structures import Button, Buttons, DateInfo, Notifiers, RobotWorkTime
+from utils import BackendManager, Utils
 
 
 class Actions:
