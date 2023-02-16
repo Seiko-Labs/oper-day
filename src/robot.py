@@ -32,7 +32,7 @@ class Robot:
         )
         date_infos: List[DateInfo] = scraper.date_infos
 
-        work_status = scraper.get_work_status(today=self.today.date, dates=date_infos)
+        work_status: int = scraper.get_work_status(today=self.today.date, dates=date_infos)
 
         i = 1
         while True:
@@ -85,7 +85,7 @@ class Robot:
 
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
 
-        colvir: Colvir = Colvir(
+        colvir = Colvir(
             credentials=self.credentials,
             process=self.process,
             today=self.today,
