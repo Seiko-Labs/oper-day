@@ -20,9 +20,9 @@ class TelegramNotifier:
 
 
 if __name__ == '__main__':
+    import os
     import dotenv
     from data_structures import Notifiers
-    import os
 
     dotenv.load_dotenv()
     with requests.Session() as _session:
