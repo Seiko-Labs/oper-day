@@ -25,10 +25,10 @@ if __name__ == '__main__':
     import os
 
     dotenv.load_dotenv()
-    with requests.Session() as session:
+    with requests.Session() as _session:
         notifiers = Notifiers(
-            log=TelegramNotifier(token=os.getenv('TOKEN_LOG'), chat_id=os.getenv(f'CHAT_ID_LOG'), session=session),
-            alert=TelegramNotifier(token=os.getenv('TOKEN_ALERT'), chat_id=os.getenv(f'CHAT_ID_ALERT'), session=session)
+            log=TelegramNotifier(token=os.getenv('TOKEN_LOG'), chat_id=os.getenv(f'CHAT_ID_LOG'), session=_session),
+            alert=TelegramNotifier(token=os.getenv('TOKEN_ALERT'), chat_id=os.getenv(f'CHAT_ID_ALERT'), session=_session)
         )
 
         # notifiers.log.send_message(message='Log test message from bot')
