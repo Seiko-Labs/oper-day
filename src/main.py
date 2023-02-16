@@ -22,7 +22,7 @@ def main() -> None:
             alert=TelegramNotifier(token=os.getenv('TOKEN_ALERT'), chat_id=os.getenv(f'CHAT_ID_ALERT'), session=session)
         )
 
-        # notifiers.log.send_message('Робот начинает работу.')
+        notifiers.log.send_message('Робот начинает работу.')
         robot: Robot = Robot(
             credentials=credentials,
             process=process,
