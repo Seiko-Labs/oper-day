@@ -81,9 +81,9 @@ class Robot:
             connection.commit()
 
     def run(self) -> None:
-        if not self.is_work_day():
-            self.notifiers.log.send_message(message='Не рабочий день. Завершаем работу.')
-            return
+        # if not self.is_work_day():
+        #     self.notifiers.log.send_message(message='Не рабочий день. Завершаем работу.')
+        #     return
 
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
 
