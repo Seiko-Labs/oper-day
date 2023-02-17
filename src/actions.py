@@ -500,7 +500,11 @@ class Actions:
         sleep(2)
 
         main_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
-        main_win.type_keys('{DOWN}~', pause=.1)
+        main_win.type_keys('{DOWN}~', pause=.5)
+
+        confirm_win = self._get_window(title='Подтверждение')
+        confirm_win.type_keys('~', pause=.1)
+        main_win.wait('exists active', timeout=600)
         self.notifiers.log.send_message(message=f'Сумма оплачена по документу "Вечер"')
 
         sleep(2)
@@ -657,9 +661,14 @@ class Actions:
         order_win.close()
 
         main_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
-        main_win.type_keys('{DOWN}', pause=.1)
-        main_win.close()
+        main_win.type_keys('{DOWN}~', pause=.5)
+
+        confirm_win = self._get_window(title='Подтверждение')
+        confirm_win.type_keys('~', pause=.1)
+        main_win.wait('exists active', timeout=600)
         self.notifiers.log.send_message(message=f'Сумма по документу "Утро" оплачена')
+
+        main_win.close()
 
     def step9(self) -> None:
         main_win = self._get_window(title='Состояние операционных периодов')
@@ -799,3 +808,5 @@ class Actions:
         self.step8()
         self.step9()
         self.step10()
+
+        self._change_day(_date=self.today.date_str)
