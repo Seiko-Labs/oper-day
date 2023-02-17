@@ -31,8 +31,8 @@ if __name__ == '__main__':
             alert=TelegramNotifier(token=os.getenv('TOKEN_ALERT'), chat_id=os.getenv(f'CHAT_ID_ALERT'), session=_session)
         )
 
-        # notifiers.log.send_message(message='Log test message from bot')
-        # notifiers.log.send_message(message=r'C:\Users\robot.ad\Desktop\2207_09.xlsb', is_document=True)
+        notifiers.log.send_message(message='Log test message from bot')
+        notifiers.log.send_message(message=r'C:\Users\robot.ad\Desktop\Untitled 1.xlsx', is_document=True)
 
-        notifiers.alert.send_message(message='Alert test message from bot')
-        notifiers.alert.send_message(message=r'C:\Users\robot.ad\Desktop\2207_09.xlsb', is_document=True)
+        # notifiers.alert.send_message(message='Alert test message from bot')
+        # notifiers.alert.send_message(message=r'C:\Users\robot.ad\Desktop\2207_09.xlsb', is_document=True)
