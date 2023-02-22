@@ -1,4 +1,5 @@
 import os
+import datetime as dt
 from datetime import datetime, timedelta
 from typing import List
 
@@ -14,7 +15,7 @@ from work_calendar import CalendarScraper
 
 class Robot:
     def __init__(self, credentials: Credentials, process: Process, notifiers: Notifiers,
-                 session: requests.Session, today: datetime.date = datetime.now().date()) -> None:
+                 session: requests.Session, today: datetime.date = dt.date(2023, 1, 27)) -> None:
         self.restricted_pids: List[int] = []
         dotenv.load_dotenv()
         self.utils = Utils()
