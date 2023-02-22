@@ -32,7 +32,7 @@ class Colvir:
             raise RuntimeError('Не удалось запустить Colvir')
 
         try:
-            # self.notifiers.log.send_message(message='Запуск Colvir')
+            self.notifiers.log.send_message(message='Запуск Colvir')
             Application(backend='win32').start(cmd_line=self.process.path)
             self.login()
             sleep(4)
@@ -53,7 +53,7 @@ class Colvir:
             self.pid: int = self.utils.get_current_process_pid(proc_name='COLVIR')
             self.app: Application = Application(backend='win32').connect(process=self.pid)
         try:
-            # self.notifiers.log.send_message(message='Успешный вход в Colvir')
+            self.notifiers.log.send_message(message='Успешный вход в Colvir')
             self.confirm_warning()
         except (ElementNotFoundError, MatchError):
             self.retry()
