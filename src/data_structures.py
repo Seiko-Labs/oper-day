@@ -1,6 +1,6 @@
 import datetime
 from dataclasses import dataclass
-from typing import Tuple
+from typing import List, Tuple
 
 from bot_notification import TelegramNotifier
 
@@ -86,3 +86,19 @@ class Buttons:
 class Notifiers:
     log: TelegramNotifier
     alert: TelegramNotifier
+
+
+class EmailInfo:
+    # email_list: List[str] = ['ualihanova.k@otbasybank.kz', 'sarybayeva.a@otbasybank.kz',
+    #                          'Seisenbin.E@otbasybank.kz', 'musabekov.r@otbasybank.kz',
+    #                          'absattarova.r@otbasybank.kz', 'mazhit.e@hcsbk.kz',
+    #                          'shakhabayev.n@otbasybank.kz', 'maulenova.s@otbasybank.kz',
+    #                          'ops2@otbasybank.kz']
+    email_list: List[str] = ['robot.ad@hcsbk.kz', 'robot.ad@hcsbk.kz']
+    recepient: str = None
+    subject: str = 'Протокол работы супервизоров PC05_101'
+    body: str = 'Протокол работы супервизоров PC05_101'
+    attachment: str = r'C:\Temp\PC05_101.xls'
+
+    def __init__(self):
+        self.recepient = ';'.join(self.email_list)

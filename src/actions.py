@@ -7,10 +7,12 @@ from typing import Dict, List
 
 from pywinauto import Application, WindowSpecification
 from pywinauto.base_wrapper import ElementNotEnabled
+from pywinauto.findwindows import ElementNotFoundError
 from pywinauto.timings import TimeoutError as TimingsTimeoutError
 
 from data_structures import Button, Buttons, DateInfo, Notifiers, RobotWorkTime
 from utils import BackendManager, Utils
+from mail import Email
 
 
 class Actions:
@@ -23,8 +25,8 @@ class Actions:
         self.robot_time = robot_time
         self.notifiers = notifiers
         self.buttons: Buttons = Buttons()
-        if today.date != dt.now().date():
-            self._change_day(today.date_str)
+        # if today.date != dt.now().date():
+        #     self._change_day(today.date_str)
 
     def _get_buttons(self, main_win: WindowSpecification, pixel_step: int = 5, offset: int = 1):
         status_win = self.app.window(title_re='Банковская система.+')
@@ -77,10 +79,10 @@ class Actions:
         filter_win['OK'].wrapper_object().click()
 
         main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
-        self.utils.type_keys(main_win, '{F12}')
+        self.utils.type_keys(main_win, '{F12}', step_delay=1)
 
         template_win = self._get_window(title='Шаблоны платежей')
-        self.utils.type_keys(template_win, '{F9}')
+        self.utils.type_keys(template_win, '{F9}', step_delay=1)
 
         filter_win2 = self._get_window(title='Фильтр')
         filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
@@ -103,13 +105,14 @@ class Actions:
             order_win.move_mouse_input(coords=(x, y), absolute=True)
             i += 1
             button_name = status_win['StatusBar'].window_text().strip()
-            if button_name == 'Сохранить изменения (PgDn)':
+            if button_name == 'Сохранить изменения (PgDn)' and self.buttons.save.coords == (0, 0):
                 self.buttons.save.coords = (x + offset, y)
                 self.buttons.filled_count += 1
-            elif button_name == 'Выполнить операцию':
+            elif button_name == 'Выполнить операцию' and self.buttons.operations.coords == (0, 0):
                 self.buttons.operations.coords = (x + offset, y)
                 self.buttons.filled_count += 1
         order_win.close()
+
         main_win.close()
 
     def _choose_mode(self, mode: str) -> None:
@@ -130,15 +133,20 @@ class Actions:
             sort_win.type_keys(f'{19 * "{DOWN}"}{{SPACE}}')
         sort_win['OK'].wrapper_object().click()
 
-    def _wait_for_reg_finish(self, main_win, file_name: str, delay: int = 60) -> None:
+    def _wait_for_reg_finish(self, main_win, file_name: str, delay: int = 120) -> None:
         finished = False
+        sleep(30)
         while not finished:
+            # self._reset_tasks()
             self.notifiers.log.send_message(message=f'Ожидание окончания обработки процедуры...')
             self.utils.kill_all_processes(proc_name='EXCEL')
             main_win.click_input(button='left', coords=self.buttons.tasks_refresh.coords, absolute=True)
-            self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
-
-            self._save_file(name=file_name)
+            try:
+                self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~', step_delay=.5)
+                self._save_file(name=file_name)
+            except ElementNotFoundError as e:
+                print(str(e))
+                continue
 
             sleep(2)
             file_path: str = rf'C:\Temp\{file_name}.xls'
@@ -149,13 +157,17 @@ class Actions:
             finished = not [row for row in self.utils.text_to_dicts(file_path)
                             if row['Исполнитель'] == 'Блокировка учетных записей']
 
+            if finished:
+                break
+
             sleep(delay)
+        main_win.close()
 
     def _get_kvit_rows(self, _window: WindowSpecification) -> List[Dict[str, str]]:
-        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}д{VK_SHIFT up}{UP}~', step_delay=.2)
+        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}д{VK_SHIFT up}{UP}~', step_delay=.5)
 
         sort_win = self._get_window(title='Сортировка')
-        self.utils.type_keys(sort_win, f'{15 * "{DOWN}"}{{SPACE}}', step_delay=.05)
+        self.utils.type_keys(sort_win, f'{15 * "{DOWN}"}{{SPACE}}', step_delay=.1)
         sort_win['OK'].wrapper_object().click()
         sleep(1)
 
@@ -184,13 +196,13 @@ class Actions:
         _window.click_input(button='left', coords=self.buttons.refresh.coords, absolute=True)
 
     def _select_all_branches(self, _window, to_bottom: bool = False) -> None:
-        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}~')
+        self.utils.type_keys(_window, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{UP}~', step_delay=.2)
         select_win = self._get_window(title='Выделение', wait_for='exists')
 
         down = 5 * '{PGDN}'
         if to_bottom:
             select_win['OK'].wrapper_object().click()
-            self.utils.type_keys(_window, f'{{UP}}{{DOWN}}{{VK_SHIFT down}}{down}{{VK_SHIFT up}}', step_delay=.01)
+            self.utils.type_keys(_window, f'{{UP}}{{DOWN}}{{VK_SHIFT down}}{down}{{VK_SHIFT up}}', step_delay=.5)
         else:
             select_win['Нижний уровень'].wrapper_object().click()
             select_win['OK'].wrapper_object().click()
@@ -199,7 +211,7 @@ class Actions:
             self.utils.type_keys(_window, f'{{LEFT}}{{LEFT}}{{VK_SHIFT down}}{down}{{VK_SHIFT up}}')
 
     def _reset_to_00(self, main_win: WindowSpecification) -> None:
-        self.utils.type_keys(main_win, '{PGUP}{PGUP}{PGUP}{PGUP}{PGUP}{RIGHT}{DOWN}{LEFT}', step_delay=.01)
+        self.utils.type_keys(main_win, '{PGUP}{PGUP}{PGUP}{PGUP}{PGUP}{RIGHT}{DOWN}{LEFT}', step_delay=.5)
 
     def _get_window(self, title: str, app: Application or None = None, wait_for: str = 'exists', timeout: int = 20,
                     regex: bool = False, found_index: int = 0) -> WindowSpecification:
@@ -238,7 +250,7 @@ class Actions:
         filter_win['OK'].click()
 
         main_win = self._get_window(title='Фоновые задания')
-        self.utils.type_keys(main_win, f'{"{VK_CONTROL down}{F10}{VK_CONTROL up}{DOWN}" * 31}{"{F10}{UP}" * 31}')
+        self.utils.type_keys(main_win, f'{"{VK_CONTROL down}{F10}{VK_CONTROL up}{DOWN}" * 31}{"{F10}{UP}" * 31}', step_delay=.5)
         main_win.close()
 
     def _fill_procedure_form(self, procedure_win: WindowSpecification, main_win: WindowSpecification,
@@ -249,25 +261,32 @@ class Actions:
             sleep(1)
             date_checkbox.click_input()
         try:
-            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
         except ElementNotEnabled:
             procedure_win['CheckBox3'].wrapper_object().click_input()
-            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        self.notifiers.log.send_message(message=f'Введен день {self.today.date_str} в форму процедуры')
+            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
+        # self.notifiers.log.send_message(message=f'Введен день {self.today.date_str} в форму процедуры')
 
         if main_branch_selected:
             branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
             if branch_checkbox.get_check_state() == 1:
                 branch_checkbox.click()
-            self.notifiers.log.send_message(message=f'Убрана галочка с "Все филиалы" в форме процедуры')
+            # self.notifiers.log.send_message(message=f'Убрана галочка с "Все филиалы" в форме процедуры')
 
-        procedure_win['OK'].wrapper_object().click()
+        procedure_win['OK'].wrapper_object().click_input()
         confirm_win = self._get_window(title='Подтверждение')
+        self.utils.type_keys(_window=confirm_win, keystrokes='~', step_delay=1)
         confirm_win.type_keys('~')
-        self.notifiers.log.send_message(message=f'Регламентная процедура начата')
+        # confirm_win.type_keys('{ESC}')
+        # self.notifiers.log.send_message(message=f'Регламентная процедура начата')
 
         main_win.click_input(button='left', coords=self.buttons.tasks.coords, absolute=True)
         tasks_win = self._get_window(title='Задания на обработку операционных периодов')
+
+        # tasks_win.close()
+        # protocol_win = self._get_window(title='Протокол')
+        # protocol_win.close()
+        # self._reset_tasks()
 
         self._wait_for_reg_finish(
             main_win=tasks_win,
@@ -294,6 +313,7 @@ class Actions:
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
             confirm_win.type_keys('~')
+            # confirm_win.type_keys('{ESC}')
         except TimingsTimeoutError:
             pass
 
@@ -306,7 +326,7 @@ class Actions:
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
         try:
-            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
         except ElementNotEnabled:
             open_day_win['CheckBox3'].wrapper_object().click()
             open_day_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
@@ -317,7 +337,8 @@ class Actions:
         open_day_win['OK'].wrapper_object().click()
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
-            confirm_win.type_keys('~')
+            self.utils.type_keys(_window=confirm_win, keystrokes='~~', step_delay=1)
+            # confirm_win.type_keys('{ESC}')
         except TimingsTimeoutError:
             pass
 
@@ -332,6 +353,7 @@ class Actions:
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
             confirm_win.type_keys('~')
+            # confirm_win.type_keys('{ESC}')
             self.notifiers.log.send_message(message='Признак выполнения 4 снят')
         except TimingsTimeoutError:
             pass
@@ -350,6 +372,80 @@ class Actions:
         self.notifiers.log.send_message(message=f'Процедура 4 по 00 успешно обработана')
 
     def step2(self) -> None:
+        self._choose_mode(mode='EXTRCT')
+
+        filter_win = self._get_window(title='Фильтр')
+
+        filter_win['Edit8'].wrapper_object().set_text(text=self.today.date_str)
+        filter_win['OKButton'].wrapper_object().click()
+
+        self.notifiers.log.send_message(message=f'Начало работы с выписками в режиме EXTRCT')
+
+        main_win = self._get_window(title='Выписки')
+
+        self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~', step_delay=.5)
+        rows = self._export_excel(file_name='950rows')
+
+        try:
+            down = next((i for i, x in enumerate(rows) if x['Тип'] == '950'), None) * '{DOWN}'
+        except KeyError:
+            self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~', step_delay=.5)
+            rows = self._export_excel(file_name='950rows', add_col=True)
+            down = next((i for i, x in enumerate(rows) if x['Тип'] == '950'), None) * '{DOWN}'
+        self.utils.type_keys(main_win, f'{down}~', step_delay=.5)
+
+        vypiska_win = self._get_window(title='Выписка', wait_for='exists active')
+        sleep(.1)
+        vypiska_win.type_keys('~')
+
+        document_win = self._get_window(title='Документ')
+        kvit_rows = self._get_kvit_rows(_window=document_win)
+
+        self.is_kvit_required = self.utils.is_kvit_required(rows=kvit_rows)
+
+        document_win.close()
+        vypiska_win.close()
+        main_win.close()
+
+    def step3(self) -> None:
+        if not self.is_kvit_required:
+            self.notifiers.log.send_message(message=f'Квитовка выписок не требуется')
+            return
+        self.notifiers.log.send_message(message=f'Требуется квитовка выписок в режиме AUTCHK')
+
+        self._choose_mode(mode='AUTCHK')
+
+        main_win = self._get_window(title='Выверяемые счета')
+
+        self.utils.type_keys(main_win, '{F7}', step_delay=1)
+
+        search_win = self._get_window(title='Поиск по номеру счета')
+        search_win['Edit2'].wrapper_object().set_text(text='KZ139')
+        search_win['OK'].wrapper_object().click()
+
+        self.utils.type_keys(main_win, '^g', step_delay=1)
+
+        vyverka_win = self._get_window(title='Подготовка системы выверки')
+        vyverka_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        vyverka_win['OK'].wrapper_object().click()
+
+        self.utils.type_keys(main_win, '^p', step_delay=1)
+
+        info_win = self._get_window(title='Информация')
+        info_win['OK'].wrapper_object().click()
+
+        result_win = self._get_window(title='Результаты операции')
+        result_text = result_win['Edit'].wrapper_object().window_text().strip()
+        result_win.close()
+
+        if 'Не успешно' in result_text:
+            self.utils.type_keys(main_win, '^a', step_delay=1)
+            result_win = self._get_window(title='Результаты операции')
+            result_win.close()
+        main_win.close()
+        self.notifiers.log.send_message(message=f'Успешная квитовка выписок')
+
+    def step4(self) -> None:
         main_win = self._get_window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win, to_bottom=True)
@@ -366,7 +462,7 @@ class Actions:
         )
         self.notifiers.log.send_message(message=f'Процедура 2 по филиалам успешно обработана')
 
-    def step3(self) -> None:
+    def step5(self) -> None:
         main_win = self.app.window(title='Состояние операционных периодов')
 
         self._select_all_branches(_window=main_win)
@@ -374,7 +470,7 @@ class Actions:
 
         main_win.click_input(button='left', coords=self.buttons.reg_procedure_2.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 2')
-        self.notifiers.log.send_message(message=f'Регламентная процедура 2 по 00 в режиме COPPER')
+        # self.notifiers.log.send_message(message=f'Регламентная процедура 2 по 00 в режиме COPPER')
 
         self._fill_procedure_form(
             procedure_win=procedure_win,
@@ -384,80 +480,6 @@ class Actions:
         )
         main_win.close()
         self.notifiers.log.send_message(message=f'Процедура 2 по 00 успешно обработана')
-
-    def step4(self) -> None:
-        self._choose_mode(mode='EXTRCT')
-
-        filter_win = self._get_window(title='Фильтр')
-
-        filter_win['Edit8'].wrapper_object().set_text(text=self.today.date_str)
-        filter_win['OKButton'].wrapper_object().click()
-
-        self.notifiers.log.send_message(message=f'Начало работы с выписками в режиме EXTRCT')
-
-        main_win = self._get_window(title='Выписки')
-
-        self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
-        rows = self._export_excel(file_name='950rows')
-
-        try:
-            down = next((i for i, x in enumerate(rows) if x['Тип'] == '950'), None) * '{DOWN}'
-        except KeyError:
-            self.utils.type_keys(main_win, '{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
-            rows = self._export_excel(file_name='950rows', add_col=True)
-            down = next((i for i, x in enumerate(rows) if x['Тип'] == '950'), None) * '{DOWN}'
-        self.utils.type_keys(main_win, f'{down}~')
-
-        vypiska_win = self._get_window(title='Выписка', wait_for='exists active')
-        sleep(.1)
-        vypiska_win.type_keys('~')
-
-        document_win = self._get_window(title='Документ')
-        kvit_rows = self._get_kvit_rows(_window=document_win)
-
-        self.is_kvit_required = self.utils.is_kvit_required(rows=kvit_rows)
-
-        document_win.close()
-        vypiska_win.close()
-        main_win.close()
-
-    def step5(self) -> None:
-        if not self.is_kvit_required:
-            self.notifiers.log.send_message(message=f'Квитовка выписок не требуется')
-            return
-        self.notifiers.log.send_message(message=f'Требуется квитовка выписок в режиме AUTCHK')
-
-        self._choose_mode(mode='AUTCHK')
-
-        main_win = self._get_window(title='Выверяемые счета')
-
-        self.utils.type_keys(main_win, '{F7}')
-
-        search_win = self._get_window(title='Поиск по номеру счета')
-        search_win['Edit2'].wrapper_object().set_text(text='KZ139')
-        search_win['OK'].wrapper_object().click()
-
-        self.utils.type_keys(main_win, '^g')
-
-        vyverka_win = self._get_window(title='Подготовка системы выверки')
-        vyverka_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
-        vyverka_win['OK'].wrapper_object().click()
-
-        self.utils.type_keys(main_win, '^p')
-
-        info_win = self._get_window(title='Информация')
-        info_win['OK'].wrapper_object().click()
-
-        result_win = self._get_window(title='Результаты операции')
-        result_text = result_win['Edit'].wrapper_object().window_text().strip()
-        result_win.close()
-
-        if 'Не успешно' in result_text:
-            self.utils.type_keys(main_win, '^a')
-            result_win = self._get_window(title='Результаты операции')
-            result_win.close()
-        main_win.close()
-        self.notifiers.log.send_message(message=f'Успешная квитовка выписок')
 
     def step6(self) -> None:
         self._choose_mode(mode='SORDPAY')
@@ -472,10 +494,10 @@ class Actions:
         filter_win['OK'].wrapper_object().click()
 
         main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
-        self.utils.type_keys(main_win, '{F12}')
+        self.utils.type_keys(main_win, '{F12}', step_delay=1)
 
         template_win = self._get_window(title='Шаблоны платежей')
-        self.utils.type_keys(template_win, '{F9}')
+        self.utils.type_keys(template_win, '{F9}', step_delay=1)
 
         filter_win2 = self._get_window(title='Фильтр')
         filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
@@ -496,14 +518,15 @@ class Actions:
         self.notifiers.log.send_message(message=f'Документ "Вечер" сохранен')
         sleep(4)
 
-        order_win.close()
-        sleep(2)
-
-        main_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
-        main_win.type_keys('{DOWN}~', pause=.5)
+        order_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
+        order_win.type_keys('{DOWN}~', pause=1)
 
         confirm_win = self._get_window(title='Подтверждение')
         confirm_win.type_keys('~', pause=.1)
+
+        order_win.close()
+        sleep(2)
+
         main_win.wait('exists active', timeout=600)
         self.notifiers.log.send_message(message=f'Сумма оплачена по документу "Вечер"')
 
@@ -516,7 +539,7 @@ class Actions:
             self.utils.kill_all_processes(proc_name='EXCEL')
             self._refresh(main_win)
             self.utils.type_keys(main_win,
-                                 '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~')
+                                 '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~', step_delay=.5)
 
             self._save_file(name=file_name)
 
@@ -560,10 +583,12 @@ class Actions:
 
         self.notifiers.log.send_message(message=f'Ожидание окончания закрытия дня по филиалам')
 
-        self._wait_for_day_procedure_end(
-            main_win=main_win,
+        main_win.click_input(button='left', coords=self.buttons.tasks.coords, absolute=True)
+        tasks_win = self._get_window(title='Задания на обработку операционных периодов')
+
+        self._wait_for_reg_finish(
+            main_win=tasks_win,
             file_name='close_day_all',
-            procedure_type='close'
         )
 
         self.notifiers.log.send_message(message=f'День закрыт по филиалам')
@@ -576,16 +601,16 @@ class Actions:
 
         self.notifiers.log.send_message(message=f'Ожидание закрытия дня по 00')
 
-        self._wait_for_day_procedure_end(
-            main_win=main_win,
+        self._wait_for_reg_finish(
+            main_win=tasks_win,
             file_name='close_day_00',
-            procedure_type='close',
-            main_branch_selected=True
         )
 
         self.notifiers.log.send_message(message=f'День закрыт по 00')
 
         self._change_day(_date=self.today.next_work_date_str)
+
+        self.today = DateInfo(date=dt.strptime('23.02.23', '%d.%m.%y').date())
 
         self.notifiers.log.send_message(message=f'Операционный день изменен на {self.today.next_work_date_str}')
 
@@ -601,14 +626,22 @@ class Actions:
 
         self.notifiers.log.send_message(message=f'Ожидание открытия дня по 00')
 
-        self._wait_for_day_procedure_end(
-            main_win=main_win,
+        self._wait_for_reg_finish(
+            main_win=tasks_win,
             file_name='open_day_00',
-            procedure_type='open',
-            main_branch_selected=True
         )
 
-        self.notifiers.log.send_message(message=f'День открыт')
+        self.notifiers.log.send_message(message=f'День открыт по 00')
+
+        self._refresh(_window=main_win)
+        self._select_all_branches(_window=main_win)
+
+        self._open_day(main_win=main_win)
+
+        self._wait_for_reg_finish(
+            main_win=tasks_win,
+            file_name='open_day_all',
+        )
 
     def step8(self) -> None:
 
@@ -625,10 +658,10 @@ class Actions:
         filter_win['OK'].wrapper_object().click()
 
         main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
-        self.utils.type_keys(main_win, '{F12}')
+        self.utils.type_keys(main_win, '{F12}', step_delay=1)
 
         template_win = self._get_window(title='Шаблоны платежей')
-        self.utils.type_keys(template_win, '{F9}')
+        self.utils.type_keys(template_win, '{F9}', step_delay=1)
 
         filter_win2 = self._get_window(title='Фильтр')
         filter_win2['Edit2'].wrapper_object().type_keys('Утро~~', pause=.2)
@@ -655,16 +688,23 @@ class Actions:
         main_win.type_keys('~')
         order_win = self._get_window(title='Мемориальный ордер', timeout=360)
         order_win.type_keys('{F4}')
-        order_win['Edit58'].type_keys('13~')
+        sleep(1)
+        order_win['Edit58'].click_input()
+        sleep(2)
+        self.utils.type_keys(_window=order_win, keystrokes='{VK_SHIFT down}{TAB}{TAB}{VK_SHIFT up}', step_delay=1)
+        self.utils.type_keys(_window=order_win['Edit58'], keystrokes='13~', step_delay=1)
+        sleep(1)
         order_win.click_input(button='left', coords=self.buttons.save.coords, absolute=True)
         sleep(2)
-        order_win.close()
 
-        main_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
-        main_win.type_keys('{DOWN}~', pause=.5)
+        order_win.click_input(button='left', coords=self.buttons.operations.coords, absolute=True)
+        order_win.type_keys('{DOWN}~', pause=.5)
 
         confirm_win = self._get_window(title='Подтверждение')
         confirm_win.type_keys('~', pause=.1)
+        # confirm_win.type_keys('{ESC}', pause=.1)
+
+        order_win.close()
         main_win.wait('exists active', timeout=600)
         self.notifiers.log.send_message(message=f'Сумма по документу "Утро" оплачена')
 
@@ -672,7 +712,7 @@ class Actions:
 
     def step9(self) -> None:
         main_win = self._get_window(title='Состояние операционных периодов')
-        self._select_all_branches(_window=main_win)
+        self._select_all_branches(_window=main_win, to_bottom=True)
 
         self.notifiers.log.send_message(message=f'Начало регламентной процедуры 1 по филиалам')
 
@@ -731,16 +771,18 @@ class Actions:
         self.notifiers.log.send_message('Начало выгрузки отчета')
 
         main_win = self._get_window(title='Состояние операционных периодов')
-        self.utils.type_keys(_window=main_win, keystrokes='{F5}')
+        self.utils.type_keys(_window=main_win, keystrokes='{F5}', step_delay=1)
 
         report_win = self._get_window(title='Выбор отчета')
-        self.utils.type_keys(_window=report_win, keystrokes='{F9}')
+        self.utils.type_keys(_window=report_win, keystrokes='{F9}', step_delay=1)
 
         filter_win = self._get_window(title='Фильтр')
         filter_win['Edit4'].wrapper_object().set_text(text='PC05_101')
+        sleep(1)
         filter_win['OK'].wrapper_object().click()
 
         report_win.wait(wait_for='visible active exists', timeout=20)
+        sleep(1)
         report_win['Предварительный просмотр'].wrapper_object().click()
 
         report_win['Экспорт в файл...'].wrapper_object().click()
@@ -750,26 +792,33 @@ class Actions:
         report_name = 'PC05_101.xls'
         report_path = os.path.join(report_root, report_name)
         file_win['Edit2'].wrapper_object().set_text(text=report_root)
+        sleep(1)
         file_win['Edit4'].wrapper_object().set_text(text=report_name)
         try:
             file_win['ComboBox'].wrapper_object().select(11)
+            sleep(1)
         except (IndexError, ValueError):
             pass
         file_win['OK'].wrapper_object().click()
 
         params_win = self._get_window(title='Параметры отчета ')
         params_win['Edit2'].wrapper_object().set_text(text=self.robot_time.start_str)
+        sleep(1)
         self.robot_time.update()
         params_win['Edit4'].wrapper_object().set_text(text=self.robot_time.end_str)
+        sleep(1)
         params_win['OK'].wrapper_object().click()
 
         while not self.utils.is_correct_file(root=report_root, xls_file_name=report_name):
             if not os.path.exists(path=report_path):
+                sleep(5)
                 continue
             if os.path.getsize(filename=report_path) == 0:
+                sleep(5)
                 continue
         self.notifiers.log.send_message('Отчет успешно выгрузился')
         self.notifiers.log.send_message(message=report_path, is_document=True)
+        Email().send()
 
     def exists_950(self, date: str):
         self._choose_mode(mode='EXTRCT')
@@ -794,13 +843,13 @@ class Actions:
         self._get_buttons(main_win=main_win)
 
         self.step1()
-        self.step2()
-        self.step3()
 
         while not self.exists_950(self.today.date_str):
             self.notifiers.log.send_message(message=f'Ожидание выписки за {self.today.date_str} ...')
             sleep(360)
 
+        self.step2()
+        self.step3()
         self.step4()
         self.step5()
         self.step6()
@@ -808,5 +857,3 @@ class Actions:
         self.step8()
         self.step9()
         self.step10()
-
-        self._change_day(_date=self.today.date_str)

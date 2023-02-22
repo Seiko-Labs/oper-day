@@ -10,13 +10,20 @@ class TelegramNotifier:
         self.session = session
         self.session.mount('http://', HTTPAdapter(max_retries=self.retries))
 
-    def send_message(self, message: str, is_document: bool = False) -> requests.models.Response:
+    def _send_message(self, message: str, is_document: bool = False) -> requests.models.Response:
         message_type = 'sendDocument' if is_document else 'sendMessage'
         api_url = f'https://api.telegram.org/bot{self.token}/{message_type}'
         args = {'url': api_url, 'params': self.api_params, 'json': {'text': message}}
         if is_document:
             args['files'] = {'document': open(file=message, mode='rb')}
         return self.session.post(**args)
+
+    def send_message(self, message: str, is_document: bool = False) -> None:
+        pass
+        # try:
+        #     self._send_message(message=message, is_document=is_document)
+        # except requests.exceptions.ConnectionError:
+        #     return
 
 
 if __name__ == '__main__':

@@ -81,9 +81,10 @@ class Robot:
             connection.commit()
 
     def run(self) -> None:
-        # if not self.is_work_day():
-        #     self.notifiers.log.send_message(message='Не рабочий день. Завершаем работу.')
-        #     return
+        if not self.is_work_day():
+            pass
+            # self.notifiers.log.send_message(message='Не рабочий день. Завершаем работу.')
+            # return
 
         self.utils.kill_all_processes(proc_name='COLVIR', restricted_pids=self.restricted_pids)
 
@@ -99,9 +100,9 @@ class Robot:
             colvir.run()
         except RuntimeError as e:
             self.notifiers.alert.send_message(message='Не удалось запустить Colvir')
-            self.emergency_call()
+            # self.emergency_call()
             raise e
         except Exception as e:
             self.notifiers.alert.send_message(message='Случилась непредвиденная ошибка')
-            self.emergency_call()
+            # self.emergency_call()
             raise e
