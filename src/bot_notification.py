@@ -19,11 +19,11 @@ class TelegramNotifier:
         return self.session.post(**args)
 
     def send_message(self, message: str, is_document: bool = False) -> None:
-        pass
-        # try:
-        #     self._send_message(message=message, is_document=is_document)
-        # except requests.exceptions.ConnectionError:
-        #     return
+        # pass
+        try:
+            self._send_message(message=message, is_document=is_document)
+        except requests.exceptions.ConnectionError:
+            return
 
 
 if __name__ == '__main__':
