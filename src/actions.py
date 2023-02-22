@@ -69,49 +69,49 @@ class Actions:
                 self.buttons.filled_count += 1
         tasks_win.close()
 
-        # self._choose_mode(mode='SORDPAY')
-        # filter_win = self._get_window(title='Фильтр')
-        # filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
-        # filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
-        # filter_win['Edit2'].wrapper_object().set_text('1')
-        # filter_win['Edit4'].wrapper_object().set_text('1')
-        # sleep(1)
-        # filter_win['OK'].wrapper_object().click()
-        #
-        # main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
-        # self.utils.type_keys(main_win, '{F12}', step_delay=1)
-        #
-        # template_win = self._get_window(title='Шаблоны платежей')
-        # self.utils.type_keys(template_win, '{F9}', step_delay=1)
-        #
-        # filter_win2 = self._get_window(title='Фильтр')
-        # filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
-        #
-        # template_win = self.app.window(title='Шаблоны платежей')
-        # sleep(1)
-        # if template_win.exists():
-        #     template_win['OK'].wrapper_object().click()
-        #
-        # order_win = self._get_window(title='Мемориальный ордер', timeout=360)
-        #
-        # rectangle = order_win['Static0'].rectangle()
-        # mid_point = rectangle.mid_point()
-        # order_win.move_mouse_input(coords=(mid_point.x, mid_point.y), absolute=True)
-        # left_border = rectangle.left
-        # i, x, y = 0, left_border, mid_point.y
-        #
-        # while self.buttons.filled_count < 11:
-        #     x, y = left_border + i * pixel_step, mid_point.y
-        #     order_win.move_mouse_input(coords=(x, y), absolute=True)
-        #     i += 1
-        #     button_name = status_win['StatusBar'].window_text().strip()
-        #     if button_name == 'Сохранить изменения (PgDn)' and self.buttons.save.coords == (0, 0):
-        #         self.buttons.save.coords = (x + offset, y)
-        #         self.buttons.filled_count += 1
-        #     elif button_name == 'Выполнить операцию' and self.buttons.operations.coords == (0, 0):
-        #         self.buttons.operations.coords = (x + offset, y)
-        #         self.buttons.filled_count += 1
-        # order_win.close()
+        self._choose_mode(mode='SORDPAY')
+        filter_win = self._get_window(title='Фильтр')
+        filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit2'].wrapper_object().set_text('1')
+        filter_win['Edit4'].wrapper_object().set_text('1')
+        sleep(1)
+        filter_win['OK'].wrapper_object().click()
+
+        main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
+        self.utils.type_keys(main_win, '{F12}', step_delay=1)
+
+        template_win = self._get_window(title='Шаблоны платежей')
+        self.utils.type_keys(template_win, '{F9}', step_delay=1)
+
+        filter_win2 = self._get_window(title='Фильтр')
+        filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
+
+        template_win = self.app.window(title='Шаблоны платежей')
+        sleep(1)
+        if template_win.exists():
+            template_win['OK'].wrapper_object().click()
+
+        order_win = self._get_window(title='Мемориальный ордер', timeout=360)
+
+        rectangle = order_win['Static0'].rectangle()
+        mid_point = rectangle.mid_point()
+        order_win.move_mouse_input(coords=(mid_point.x, mid_point.y), absolute=True)
+        left_border = rectangle.left
+        i, x, y = 0, left_border, mid_point.y
+
+        while self.buttons.filled_count < 11:
+            x, y = left_border + i * pixel_step, mid_point.y
+            order_win.move_mouse_input(coords=(x, y), absolute=True)
+            i += 1
+            button_name = status_win['StatusBar'].window_text().strip()
+            if button_name == 'Сохранить изменения (PgDn)' and self.buttons.save.coords == (0, 0):
+                self.buttons.save.coords = (x + offset, y)
+                self.buttons.filled_count += 1
+            elif button_name == 'Выполнить операцию' and self.buttons.operations.coords == (0, 0):
+                self.buttons.operations.coords = (x + offset, y)
+                self.buttons.filled_count += 1
+        order_win.close()
 
         main_win.close()
 
@@ -138,6 +138,9 @@ class Actions:
         sleep(30)
         self.notifiers.log.send_message(message=f'Ожидание окончания обработки процедуры...')
         while not finished:
+            # username = 'Блокировка учетных записей'
+            username = 'Создатель базы данных'
+
             self.utils.kill_all_processes(proc_name='EXCEL')
             main_win.click_input(button='left', coords=self.buttons.tasks_refresh.coords, absolute=True)
             try:
@@ -153,8 +156,7 @@ class Actions:
                 sleep(2)
             self.utils.kill_all_processes(proc_name='EXCEL')
 
-            finished = not [row for row in self.utils.text_to_dicts(file_path)
-                            if row['Исполнитель'] == 'Блокировка учетных записей']
+            finished = not [row for row in self.utils.text_to_dicts(file_path) if row['Исполнитель'] == username]
 
             if finished:
                 break
@@ -260,24 +262,24 @@ class Actions:
             sleep(1)
             date_checkbox.click_input()
         try:
-            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
+            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         except ElementNotEnabled:
             procedure_win['CheckBox3'].wrapper_object().click_input()
-            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
-        # self.notifiers.log.send_message(message=f'Введен день {self.today.date_str} в форму процедуры')
+            procedure_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
+        self.notifiers.log.send_message(message=f'Введен день {self.today.date_str} в форму процедуры')
 
         if main_branch_selected:
             branch_checkbox = procedure_win['CheckBox2'].wrapper_object()
             if branch_checkbox.get_check_state() == 1:
                 branch_checkbox.click()
-            # self.notifiers.log.send_message(message=f'Убрана галочка с "Все филиалы" в форме процедуры')
+            self.notifiers.log.send_message(message=f'Убрана галочка с "Все филиалы" в форме процедуры')
 
         procedure_win['OK'].wrapper_object().click_input()
         confirm_win = self._get_window(title='Подтверждение')
         self.utils.type_keys(_window=confirm_win, keystrokes='~', step_delay=1)
         confirm_win.type_keys('~')
         # confirm_win.type_keys('{ESC}')
-        # self.notifiers.log.send_message(message=f'Регламентная процедура начата')
+        self.notifiers.log.send_message(message=f'Регламентная процедура начата')
 
         main_win.click_input(button='left', coords=self.buttons.tasks.coords, absolute=True)
         tasks_win = self._get_window(title='Задания на обработку операционных периодов')
@@ -325,10 +327,10 @@ class Actions:
         if date_checkbox.get_check_state() == 0:
             date_checkbox.click()
         try:
-            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
+            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         except ElementNotEnabled:
             open_day_win['CheckBox3'].wrapper_object().click()
-            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.next_work_date_str)
+            open_day_win['Edit2'].wrapper_object().set_text(text=self.today.date_str)
         branch_checkbox = open_day_win['CheckBox2'].wrapper_object()
         if branch_checkbox.get_check_state() == (1 if main_branch_selected else 0):
             branch_checkbox.click()
@@ -469,7 +471,7 @@ class Actions:
 
         main_win.click_input(button='left', coords=self.buttons.reg_procedure_2.coords, absolute=True)
         procedure_win = self._get_window(title='Регламентная процедура 2')
-        # self.notifiers.log.send_message(message=f'Регламентная процедура 2 по 00 в режиме COPPER')
+        self.notifiers.log.send_message(message=f'Регламентная процедура 2 по 00 в режиме COPPER')
 
         self._fill_procedure_form(
             procedure_win=procedure_win,
@@ -553,7 +555,7 @@ class Actions:
             file_name='close_day_all',
         )
 
-        self.notifiers.log.send_message(message=f'День закрыт по филиалам')
+        self.notifiers.log.send_message(message=f'Обработка закрытия дня по филиалам завершена')
 
         self._reset_to_00(main_win=main_win)
 
@@ -568,13 +570,13 @@ class Actions:
             file_name='close_day_00',
         )
 
-        self.notifiers.log.send_message(message=f'День закрыт по 00')
+        self.notifiers.log.send_message(message=f'Обработка закрытия дня по 00 завершена')
 
         self._change_day(_date=self.today.next_work_date_str)
 
-        self.today = DateInfo(date=dt.strptime('23.02.23', '%d.%m.%y').date())
-
         self.notifiers.log.send_message(message=f'Операционный день изменен на {self.today.next_work_date_str}')
+
+        self.today = DateInfo(date=dt.strptime(self.today.next_work_date_str, '%d.%m.%y').date())
 
         self._refresh(_window=main_win)
 
@@ -593,7 +595,7 @@ class Actions:
             file_name='open_day_00',
         )
 
-        self.notifiers.log.send_message(message=f'День открыт по 00')
+        self.notifiers.log.send_message(message=f'Обработка открытия дня по 00 завершена')
 
         self._refresh(_window=main_win)
         self._select_all_branches(_window=main_win)
@@ -605,6 +607,8 @@ class Actions:
             file_name='open_day_all',
         )
 
+        self.notifiers.log.send_message(message=f'Обработка открытия дня по филиалам завершена')
+
     def step8(self) -> None:
 
         self.notifiers.log.send_message(message=f'Начало работы в режиме SORDPAY')
@@ -612,8 +616,8 @@ class Actions:
         self._choose_mode(mode='SORDPAY')
 
         filter_win = self._get_window(title='Фильтр')
-        filter_win['Edit8'].wrapper_object().set_text(self.today.next_work_date_str)
-        filter_win['Edit6'].wrapper_object().set_text(self.today.next_work_date_str)
+        filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
+        filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
         filter_win['Edit2'].wrapper_object().set_text('1')
         filter_win['Edit4'].wrapper_object().set_text('1')
         sleep(1)
