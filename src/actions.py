@@ -69,49 +69,49 @@ class Actions:
                 self.buttons.filled_count += 1
         tasks_win.close()
 
-        self._choose_mode(mode='SORDPAY')
-        filter_win = self._get_window(title='Фильтр')
-        filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
-        filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
-        filter_win['Edit2'].wrapper_object().set_text('1')
-        filter_win['Edit4'].wrapper_object().set_text('1')
-        sleep(1)
-        filter_win['OK'].wrapper_object().click()
-
-        main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
-        self.utils.type_keys(main_win, '{F12}', step_delay=1)
-
-        template_win = self._get_window(title='Шаблоны платежей')
-        self.utils.type_keys(template_win, '{F9}', step_delay=1)
-
-        filter_win2 = self._get_window(title='Фильтр')
-        filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
-
-        template_win = self.app.window(title='Шаблоны платежей')
-        sleep(1)
-        if template_win.exists():
-            template_win['OK'].wrapper_object().click()
-
-        order_win = self._get_window(title='Мемориальный ордер', timeout=360)
-
-        rectangle = order_win['Static0'].rectangle()
-        mid_point = rectangle.mid_point()
-        order_win.move_mouse_input(coords=(mid_point.x, mid_point.y), absolute=True)
-        left_border = rectangle.left
-        i, x, y = 0, left_border, mid_point.y
-
-        while self.buttons.filled_count < 11:
-            x, y = left_border + i * pixel_step, mid_point.y
-            order_win.move_mouse_input(coords=(x, y), absolute=True)
-            i += 1
-            button_name = status_win['StatusBar'].window_text().strip()
-            if button_name == 'Сохранить изменения (PgDn)' and self.buttons.save.coords == (0, 0):
-                self.buttons.save.coords = (x + offset, y)
-                self.buttons.filled_count += 1
-            elif button_name == 'Выполнить операцию' and self.buttons.operations.coords == (0, 0):
-                self.buttons.operations.coords = (x + offset, y)
-                self.buttons.filled_count += 1
-        order_win.close()
+        # self._choose_mode(mode='SORDPAY')
+        # filter_win = self._get_window(title='Фильтр')
+        # filter_win['Edit8'].wrapper_object().set_text(self.today.date_str)
+        # filter_win['Edit6'].wrapper_object().set_text(self.today.date_str)
+        # filter_win['Edit2'].wrapper_object().set_text('1')
+        # filter_win['Edit4'].wrapper_object().set_text('1')
+        # sleep(1)
+        # filter_win['OK'].wrapper_object().click()
+        #
+        # main_win = self._get_window(title='Расчетные документы филиала', timeout=600)
+        # self.utils.type_keys(main_win, '{F12}', step_delay=1)
+        #
+        # template_win = self._get_window(title='Шаблоны платежей')
+        # self.utils.type_keys(template_win, '{F9}', step_delay=1)
+        #
+        # filter_win2 = self._get_window(title='Фильтр')
+        # filter_win2['Edit2'].wrapper_object().type_keys('Вечер~~', pause=.2)
+        #
+        # template_win = self.app.window(title='Шаблоны платежей')
+        # sleep(1)
+        # if template_win.exists():
+        #     template_win['OK'].wrapper_object().click()
+        #
+        # order_win = self._get_window(title='Мемориальный ордер', timeout=360)
+        #
+        # rectangle = order_win['Static0'].rectangle()
+        # mid_point = rectangle.mid_point()
+        # order_win.move_mouse_input(coords=(mid_point.x, mid_point.y), absolute=True)
+        # left_border = rectangle.left
+        # i, x, y = 0, left_border, mid_point.y
+        #
+        # while self.buttons.filled_count < 11:
+        #     x, y = left_border + i * pixel_step, mid_point.y
+        #     order_win.move_mouse_input(coords=(x, y), absolute=True)
+        #     i += 1
+        #     button_name = status_win['StatusBar'].window_text().strip()
+        #     if button_name == 'Сохранить изменения (PgDn)' and self.buttons.save.coords == (0, 0):
+        #         self.buttons.save.coords = (x + offset, y)
+        #         self.buttons.filled_count += 1
+        #     elif button_name == 'Выполнить операцию' and self.buttons.operations.coords == (0, 0):
+        #         self.buttons.operations.coords = (x + offset, y)
+        #         self.buttons.filled_count += 1
+        # order_win.close()
 
         main_win.close()
 
@@ -136,9 +136,8 @@ class Actions:
     def _wait_for_reg_finish(self, main_win, file_name: str, delay: int = 120) -> None:
         finished = False
         sleep(30)
+        self.notifiers.log.send_message(message=f'Ожидание окончания обработки процедуры...')
         while not finished:
-            # self._reset_tasks()
-            self.notifiers.log.send_message(message=f'Ожидание окончания обработки процедуры...')
             self.utils.kill_all_processes(proc_name='EXCEL')
             main_win.click_input(button='left', coords=self.buttons.tasks_refresh.coords, absolute=True)
             try:
@@ -312,7 +311,7 @@ class Actions:
         close_day_win['OK'].wrapper_object().click()
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
-            confirm_win.type_keys('~')
+            # confirm_win.type_keys('~')
             # confirm_win.type_keys('{ESC}')
         except TimingsTimeoutError:
             pass
@@ -337,7 +336,7 @@ class Actions:
         open_day_win['OK'].wrapper_object().click()
         try:
             confirm_win = self._get_window(title='Подтверждение', timeout=5)
-            self.utils.type_keys(_window=confirm_win, keystrokes='~~', step_delay=1)
+            # self.utils.type_keys(_window=confirm_win, keystrokes='~~', step_delay=1)
             # confirm_win.type_keys('{ESC}')
         except TimingsTimeoutError:
             pass
@@ -532,43 +531,6 @@ class Actions:
 
         sleep(2)
         main_win.close()
-
-    def _wait_for_day_procedure_end(self, main_win, file_name: str, procedure_type: str,
-                                    main_branch_selected: bool = False, delay: int = 10) -> None:
-        while True:
-            self.utils.kill_all_processes(proc_name='EXCEL')
-            self._refresh(main_win)
-            self.utils.type_keys(main_win,
-                                 '{RIGHT}{VK_SHIFT down}{VK_MENU}с{VK_SHIFT up}{DOWN}{DOWN}{DOWN}{RIGHT}{DOWN}~', step_delay=.5)
-
-            self._save_file(name=file_name)
-
-            sleep(2)
-            file_path: str = rf'C:\Temp\{file_name}.xls'
-            while not os.path.isfile(path=file_path):
-                sleep(2)
-            self.utils.kill_all_processes(proc_name='EXCEL')
-
-            rows = self.utils.text_to_dicts(file_path)
-
-            if procedure_type == 'close':
-                date_key = 'Закрыты'
-                date = self.today.date_str
-            else:
-                date_key = 'Открыты'
-                date = self.today.next_work_date_str
-
-            if main_branch_selected:
-                data = [row for row in rows if
-                        row['Код подразделения'] == '00' and row[f'{date_key} по дату'] == date]
-            else:
-                data = [row for row in rows
-                        if row['Код подразделения'] != '00' and row[f'{date_key} по дату'] == date]
-
-            if not data:
-                break
-
-            sleep(delay)
 
     def step7(self) -> None:
         self._choose_mode(mode='COPPER')
