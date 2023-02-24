@@ -94,10 +94,10 @@ class EmailInfo:
     #                          'absattarova.r@otbasybank.kz', 'mazhit.e@hcsbk.kz',
     #                          'shakhabayev.n@otbasybank.kz', 'maulenova.s@otbasybank.kz',
     #                          'ops2@otbasybank.kz']
-    email_list: List[str] = ['robot.ad@hcsbk.kz', 'robot.ad@hcsbk.kz']
+    email_list: List[str] = ['robot.ad@hcsbk.kz']
     recepient: str = None
-    subject: str = 'Протокол работы супервизоров PC05_101'
-    body: str = 'Протокол работы супервизоров PC05_101'
+    subject: str = 'Протокол работы супервизоров PC05_101 TEST'
+    body: str = 'Протокол работы супервизоров PC05_101 TEST'
     attachment: str = r'C:\Temp\PC05_101.xls'
 
     def __init__(self):
